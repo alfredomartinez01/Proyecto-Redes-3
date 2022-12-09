@@ -1,7 +1,7 @@
 import pexpect
 import getpass
-import networkx as nx
-import matplotlib.pyplot as plt
+# import networkx as nx
+# import matplotlib.pyplot as plt
 
 class Router:
     def __init__(self, ip, name, user="root", password="root"):
