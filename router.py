@@ -55,7 +55,26 @@ class Router:
             enrutador.buscarVecinos(routers)
 
     def configurarSNMP(self):
-        pass
+        mensaje = "Conectando a " + self.name
+        logging.debug(mensaje)
+
+        """ Nos conectamos al router """
+        child = pexpect.spawn('telnet '+ self.ip)
+        child.expect('Username: ')
+        child.sendline(self.user)
+        child.expect('Password: ')
+        child.sendline(self.password)
+        
+        """ Configuramos el snmp"""
+        child.expect(self.name+"#")
+        child.sendline("snpm-server comunity | i snmp");
+        child.expect(self.name+"#")
+        child.sendline("snmp-server enable traps snmp linkdown linkup");
+        child.expect(self.name+"#")
+        child.sendline("snmp-server host 10.0.1.1 version 2c comun_pruebas");
+        child.expect(self.name+"#")
+        
+        
 
     def monitorear(self,intefaz, periodo):
         pass
