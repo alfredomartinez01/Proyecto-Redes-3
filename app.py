@@ -3,7 +3,7 @@ from red import Red
 import logging
 
 # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', handlers=[logging.FileHandler('app.log')])
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.WARNING, format='%(levelname)s: %(message)s')
 
 app = Flask(__name__)
 red = None

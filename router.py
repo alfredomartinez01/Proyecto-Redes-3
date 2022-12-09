@@ -1,7 +1,5 @@
 import pexpect
 import getpass
-# import networkx as nx
-# import matplotlib.pyplot as plt
 import logging
 import time
 
@@ -34,7 +32,7 @@ class Router:
         conectados = [x for x in tabla_dispositivos if "Enrutador" in x] 
 
         """ Registramos el router """  
-        routers[self.name] = {"ip": self.ip, "user": self.user, "password": self.password} # Guardamos la info del dispositivo
+        routers[self.name] = {"ip": self.ip, "user": self.user, "password": self.password, "conectados": [x.split(".")[0] for x in conectados]} # Guardamos la info del dispositivo
         
         """ Obtenemos la informacion de cada dispositivo conectado """
         for dispositivo in conectados:
@@ -49,5 +47,6 @@ class Router:
                 if 'address:' == info_dispositivo[linea]:
                     ip = info_dispositivo[linea+1]
             
+            # Examinamos los routers vecinos
             enrutador = Router(str(ip), dispositivo.split(".")[0], self.user, self.password)
             enrutador.buscarVecinos(routers)
