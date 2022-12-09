@@ -31,8 +31,8 @@ def obtenerTopologia():
     red = Red(ip, name, user, password)
     
     # Leyendo la topologia
-    response = jsonify(red.leerTopologia())
-    return response
+    topologia = red.leerTopologia()
+    return jsonify(topologia)
 
 
 if __name__ == '__main__':

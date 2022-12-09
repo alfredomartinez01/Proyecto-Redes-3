@@ -12,8 +12,8 @@ async function cargarTopologia() {
             body: JSON.stringify({
                 'ip': '10.0.1.254',
                 'name': 'Enrutador-4',
-                'user': 'admin',
-                'password': 'admin'
+                'user': 'root',
+                'password': 'root'
             })
         }
     );
