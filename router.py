@@ -50,3 +50,9 @@ class Router:
             # Examinamos los routers vecinos
             enrutador = Router(str(ip), dispositivo.split(".")[0], self.user, self.password)
             enrutador.buscarVecinos(routers)
+
+    def configurarSNMP():
+        loggin.debug("Hola desde" + self.name)
+
+    def monitorear(intefaz, periodo):
+        pass

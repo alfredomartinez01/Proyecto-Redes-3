@@ -7,7 +7,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Administración de redes</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="/static/scripts.js"></script>
     <link rel="stylesheet" href="/static/styles.css">
 </head>
 
@@ -15,28 +14,43 @@
     <div class="bg-gray-300">
         <main class="container relative mx-auto my-5 h-5/6 p-4 rounded bg-slate-100 flex flex-col">
             <!-- Título -->
-            <h1 class="text-red-500 font-bold text-center w-100 text-3xl">Administrador de redes</h1>
+            <h1 class="text-red-500 font-bold text-center w-100 text-3xl"><a href="/">Administrador de redes</a></h1>
 
             <!-- Contenido variable -->
-            <div class="content overflow-y-auto">
-                
-                <!-- Topología -->
-                <div class="topologia mt-5 flex flex-col items-center">
-                    <h2 class="text-gray-700 font-bold text-center w-100 text-md mb-2 block">Topología</h2>
-                    <img src="" id="imagen-topologia" alt="Topología de la red" class="max-w-full max-h-96">
+            <div class="content h-screen flex flex-col justify-between">
+                <div class="h-5/6 flex flex-col justify-start overflow-y-auto">
+                    <!-- Titulo -->
+                    <h2 id="titulo-seccion" class="text-gray-700 font-bold text-center w-100 text-xl mb-2 block">
+                        Topología</h2>
+
+                    <!-- Topología -->
+                    <div class="topologia mt-5 flex flex-col items-center">
+                        <img src="" id="imagen-topologia" alt="Topología de la red" class="max-w-full max-h-96">
+                    </div>
                 </div>
 
                 <!-- opciones de administración -->
-                <div class="opciones mt-5 flex flex-col items-center border-t-2 border-gray-300">
-                    <h2 class="text-gray-700 font-bold text-center w-100 text-md mb-2 block">Opciones de administración</h2>
+                <div class="opciones flex flex-col items-center border-t-2 border-gray-300">
+                    <h2 class="text-gray-700 font-bold text-center w-100 text-md mb-2 block">Opciones de administración
+                    </h2>
                     <div class="flex flex-row justify-center">
-                        <button class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-1 py-1 rounded-md text-center text-sm mr-2">Agregar dispositivo</button>
-                        <button class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-1 py-1 rounded-md text-center text-sm mr-2">Eliminar dispositivo</button>
-                        <button class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-1 py-1 rounded-md text-center text-sm mr-2">Modificar dispositivo</button>
+                        <button id=""
+                            class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2">Getionar
+                            usuarios</button>
+                        <button id=""
+                            class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2">Gestionar
+                            protocolos</button>
+                        <button id=""
+                            class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2">Cambiar
+                            conf. system de la MIB-II</button>
+                        <a id="btn-monitorear" href="/monitorear"
+                            class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2">Monitoriear
+                            interfaces</a>
                     </div>
-            </div>
+                </div>
         </main>
     </div>
+    <script src="/static/scripts/main.js"></script>
 </body>
 
 </html>

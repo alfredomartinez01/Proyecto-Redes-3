@@ -1,10 +1,8 @@
-/* Agregando listeners */
+/* LISTENERS */
 // Documento
 document.addEventListener('DOMContentLoaded', cargarTopologia);
 
-/* Variables y constantes*/
-let topologia = null;
-
+/* FUNCIONES */
 async function cargarTopologia() { // Consultamos la API para obtener la topologia
     const response = await fetch('/topologia',
         {
