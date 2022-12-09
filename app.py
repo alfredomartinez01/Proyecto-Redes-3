@@ -26,6 +26,7 @@ def obtenerTopologia():
     password = credenciales['password']
     
     # Asignando crecentiales a la red
+    logging.debug("Asignando credenciales a la red")
     global red 
     red = Red(ip, name, user, password)
     
