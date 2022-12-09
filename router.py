@@ -29,10 +29,13 @@ class Router:
         child.sendline('show cdp ne | begin Device') # Obtenemos la tabla de dispositivos
         child.expect(self.name+"#")
         tabla_dispositivos = child.before.decode().split()
-        conectados = [x for x in tabla_dispositivos if "Enrutador" in x] 
+        
+        conectados = [x for x in tabla_dispositivos if "Enrutador" in x] # Agrega a la lista si tiene la palabra Enrutador
+        interfaces = []
+        [interfaces.append(x) for x in tabla_dispositivos if ("/" in x) and (x not in interfaces)] # Agrega a la lista si tiene / y no repetidos
 
         """ Registramos el router """  
-        routers[self.name] = {"ip": self.ip, "user": self.user, "password": self.password, "conectados": [x.split(".")[0] for x in conectados]} # Guardamos la info del dispositivo
+        routers[self.name] = {"ip": self.ip, "user": self.user, "password": self.password, "conectados": [x.split(".")[0] for x in conectados], "interfaces": interfaces} # Guardamos la info del dispositivo
         
         """ Obtenemos la informacion de cada dispositivo conectado """
         for dispositivo in conectados:
@@ -51,8 +54,8 @@ class Router:
             enrutador = Router(str(ip), dispositivo.split(".")[0], self.user, self.password)
             enrutador.buscarVecinos(routers)
 
-    def configurarSNMP():
-        loggin.debug("Hola desde" + self.name)
+    def configurarSNMP(self):
+        pass
 
-    def monitorear(intefaz, periodo):
+    def monitorear(self,intefaz, periodo):
         pass

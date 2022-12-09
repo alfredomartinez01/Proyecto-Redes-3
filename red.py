@@ -32,7 +32,7 @@ class Red():
     def obtenerRouters(self):
         return self.routers
 
-    def configurarSNMP(router):
+    def configurarSNMP(self, router):
         if router in self.routers:
             enrutador = Router(self.routers[router]["ip"], router, self.routers[router]["user"], self.routers[router]["password"])
             enrutador.configurarSNMP()

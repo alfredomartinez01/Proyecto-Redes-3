@@ -3,7 +3,7 @@ from red import Red
 import logging
 
 # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', handlers=[logging.FileHandler('app.log')])
-logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.WARNING, format='%(levelname)s: %(message)s')
 
 app = Flask(__name__)
 red = None
@@ -30,12 +30,11 @@ def obtenerTopologia():
     password = credenciales['password']
     
     # Asignando crecentiales a la red
-    logging.debug("Asignando credenciales a la red")
     global red 
     red = Red(ip, name, user, password)
     
     # Leyendo la topologia
-    #red.leerTopologia() # almacena en el archivo topologia.py
+    red.leerTopologia() # almacena en el archivo topologia.jpg
     
     return send_file('static/topologia.jpg')
 
@@ -52,15 +51,13 @@ def obtenerInfoTopologia():
 @app.post('/snmp/<router>')
 def levantarSNMP(router):
     """ Levantando procolo SNMP en router """
-    try:
-        # Levantando protocolo SNMP
-        red.configurarSNMP(router)
-        return jsonify({"status": "ok"})
-    except:
-        return jsonify({"status": "Error configurando SNMP"}), 500
+    # Levantando protocolo SNMP
+    red.configurarSNMP(router)
+    
+    return jsonify({"status": "ok"})
 
-@app.post('/monitorear')
-def monitorear(router):
+@app.post('/monitorear-interfaz')
+def monitorearInterfaz():
     """ Realizando monitoreo en interfaz de router """
     # Obteniendo parametros desde la ip
     credenciales = request.get_json()

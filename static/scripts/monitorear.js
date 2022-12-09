@@ -14,7 +14,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     const selectRouter = document.querySelector("#select-router");
     selectRouter.innerHTML = `
         <option value="">Selecciona el router</option>
-        <option value="1">Prueba</option>
         ${topologia.map((router, index) => `<option value="${index}">${router.name}</option>`).join('')}
     `;
 
@@ -29,7 +28,7 @@ document.querySelector("#select-router").addEventListener('change', (e) => {
     const selectInterfaz = document.querySelector("#select-interfaz");
     selectInterfaz.innerHTML = `
         <option value="">Selecciona la interfaz</option>
-        <option value="1">Prueba</option>
+        ${router.interfaces.map((interfaz, index) => `<option value="${index}">fas ${interfaz}</option>`).join('')}
     `;
 
     containerInterfaz.style.display = "block";
@@ -44,11 +43,15 @@ document.querySelector("#select-interfaz").addEventListener('change', (e) => {
 // Botón aceptar
 boton_aceptar.addEventListener('click', async () => {
     // Obteniendo los parámetros del formulario
+    const ind_router = document.querySelector("#select-router").value;
+    const ind_interfaz = document.querySelector("#select-interfaz").value
+
     const parametros = {
-        router: document.querySelector("#select-router").value,
-        interfaz: document.querySelector("#select-interfaz").value,
+        router: topologia[ind_router].name,
+        interfaz: topologia[ind_router].interfaces[ind_interfaz],
         periodo: document.querySelector("#select-periodo").value
     };
+    console.log(parametros)
     try {
         await levantarSNMP(parametros.router); // Levantamos el servicio SNMP en el router seleccionado
         const graficas = await monitorear(parametros); // Obtenemos las gráficas
@@ -74,7 +77,11 @@ async function obtenerInfoTopologia() { // Consultamos la API para obtener la in
 
     const routers = []
     for (const router in data) {
-        routers.push(router);
+        routers.push({
+            name: router,
+            "ip": data[router]['ip'],
+            "interfaces": data[router]['interfaces'] || null
+        });
     }
 
     topologia = routers;
@@ -95,7 +102,7 @@ async function monitorear(parametros) { // Consultamos la API para obtener un mo
         throw new Error("Debes seleccionar todos los parámetros");
     }
 
-    const response = await fetch(`/monitorear`, {
+    const response = await fetch(`/monitorear-interfaz`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
