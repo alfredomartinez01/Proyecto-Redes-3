@@ -14,7 +14,7 @@ class Router:
         if self.name in routers.keys(): # Si ya fue obtenido, no lo volvemos a obtener
             return
         
-        mensaje = "Conectando a " + self.name + " con " + self.user + ": " + self.password
+        mensaje = "Conectando a " + self.name
         logging.debug(mensaje)
 
         """ Nos conectamos al router """

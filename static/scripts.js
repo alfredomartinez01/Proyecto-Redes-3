@@ -2,7 +2,10 @@
 // Documento
 document.addEventListener('DOMContentLoaded', cargarTopologia);
 
-async function cargarTopologia() {
+/* Variables y constantes*/
+let topologia = null;
+
+async function cargarTopologia() { // Consultamos la API para obtener la topologia
     const response = await fetch('/topologia',
         {
             method: 'POST',
@@ -17,6 +20,7 @@ async function cargarTopologia() {
             })
         }
     );
-    const data = await response.json();
-    console.log(data);
+    // Obtenemos la imagen y la asignamos
+    const blob = await response.blob();
+    document.querySelector("#imagen-topologia").src = window.URL.createObjectURL(blob);
 };
