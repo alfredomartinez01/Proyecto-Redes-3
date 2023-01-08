@@ -13,6 +13,11 @@ def index():
     """ Obtiene la pagina principal """
     return send_file('static/index.html')
     
+@app.get('/usuarios')
+def usuarios():    
+    """ Obtiene la pagina de gestión de usuarios """
+    return send_file('static/usuarios.html')
+
 @app.get('/monitorear')
 def monitorear():
     """ Obtiene la pagina de monitoreo """
