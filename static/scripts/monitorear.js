@@ -33,7 +33,7 @@ document.querySelector("#select-router").addEventListener('change', (e) => {
 
     containerInterfaz.style.display = "block";
 });
-// Selecţionar interfaz
+// Seleccionar interfaz
 document.querySelector("#select-interfaz").addEventListener('change', (e) => {
     const selectPeriodo = document.querySelector("#select-periodo");
 

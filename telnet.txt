@@ -1,0 +1,5 @@
+configure t
+line vty 0 15
+password root
+exit
+exit

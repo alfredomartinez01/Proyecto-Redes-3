@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administración de redes</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/static/styles.css">
+</head>
+
+<body>
+    <div class="bg-gray-300">
+        <main class="container relative mx-auto my-5 h-5/6 p-4 rounded bg-slate-100 flex flex-col">
+            <!-- Título -->
+            <h1 class="text-red-500 font-bold text-center w-100 text-3xl"><a href="/">Administrador de redes</a></h1>
+            <!-- Contenido variable -->
+            <div class="content h-screen flex flex-col justify-between">
+                <div class="h-5/6 flex flex-col justify-start overflow-y-auto">
+                    <!-- Titulo -->
+                    <h2 id="titulo-seccion" class="text-gray-700 font-bold text-center w-100 text-xl mb-2 block">
+                        Actualizar información de la MIB-II</h2>
+
+                    <!-- Selector de router -->
+                    <div class="selector-router mx-auto justify-self-start" style="display: none;">
+                        <label for="router" class="block my-3 text-md text-sky-800 text-center">Router</label>
+                        <select name="router" class="p-2 text-md hover:cursor-pointer" id="select-router">
+                            <!-- Opciones de router -->
+                        </select>
+                    </div>
+
+                    <!-- Formulario de info MIB-II -->
+                    <form class="w-1/2 mx-auto" class="info-mib">
+                        <!-- Nombre del host -->
+                        <label for="nombre" class="block m-2">Nombre del host</label>
+                        <input type="text" name="nombre" id="nombre" class="block w-full p-2 text-md" placeholder="Nombre del host">
+
+                        <!-- Descripción -->
+                        <label for="descripcion" class="block m-2">Descripción</label>
+                        <input type="text" name="descripcion" id="descripcion" class="block w-full p-2 text-md" placeholder="Descripción">
+
+                        <!-- Contacto -->
+                        <label for="contacto" class="block m-2">Contacto</label>
+                        <input type="text" name="contacto" id="contacto" class="block w-full p-2 text-md" placeholder="Contacto">
+
+                        <!-- Ubicación -->
+                        <label for="ubicacion" class="block m-2">Ubicación</label>
+                        <input type="text" name="ubicacion" id="ubicacion" class="block w-full p-2 text-md" placeholder="Ubicación">
+                        
+                        <!-- Botones -->
+                        <div class="flex flex-row justify-center mt-2">
+                            <button id="btn-actualizar" class="bg-green-500 hover:bg-green-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2" type="submit">Actualizar</button>
+                        </div>
+
+                    </form>
+
+                </div>
+
+                <!-- opciones de administración -->
+                <div class="opciones flex flex-col items-center border-t-2 border-gray-300">
+                    <h2 class="text-gray-700 font-bold text-center w-100 text-md mb-2 block">Opciones de administración
+                    </h2>
+                    <div class="flex flex-row justify-center">
+                        <button id=""
+                            class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2">Getionar
+                            usuarios</button>
+                        <button id=""
+                            class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2">Gestionar
+                            protocolos</button>
+                        <button id=""
+                            class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2">Cambiar
+                            conf. system de la MIB-II</button>
+                        <button id="btn-monitorear"
+                            class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2">Monitoriear
+                            interfaces</button>
+                    </div>
+                </div>
+        </main>
+    </div>
+    <script src="/static/scripts/modificar-mib.js"></script>
+</body>
+
+</html>
