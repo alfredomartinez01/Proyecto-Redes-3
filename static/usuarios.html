@@ -20,7 +20,7 @@
                 <div class="h-5/6 flex flex-col justify-start overflow-y-auto">
                     <!-- Titulo -->
                     <h2 id="titulo-seccion" class="text-gray-700 font-bold text-center w-100 text-xl mb-2 block">
-                        Gestionar protocolos</h2>
+                        Gestionar usuarios</h2>
 
                     <!-- Selector de router -->
                     <div class="selector-router mx-auto justify-self-start" style="display: none;">
@@ -42,28 +42,13 @@
                                 </tr>
                             </thead>
                             <tbody id="tabla-usuarios" class="bg-gray-200">
-                                <!-- Filas de protocolos -->
-                                <tr class="border-t border-gray-500">
-                                    <td>
-                                        <p class="text-center">root</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-center">root</p>
-                                    </td>
-                                    <td>
-                                        <p class="text-center">0</p>
-                                    </td>
-                                    <td>
-                                        <button id="btn-edtar"
-                                            class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr- my-1">Editar</button>
-                                    </td>
-                                </tr>
+                                <!-- Filas de usuarios -->
                             </tbody>
                         </table>
                     </div>
 
                     <!-- Formulario nuevo usuario editar -->
-                    <form class="w-1/2 mx-auto" class="info-usuario" onsubmit="nuevoUsuario()" style="display: none;">
+                    <form class="w-1/2 mx-auto" id="info-usuario"  style="display: none;">
                         <!-- Nombre del usuario -->
                         <label for="nombre" class="block m-2">Nombre del usuario</label>
                         <input type="text" name="nombre" id="nombre" class="block w-full p-2 text-md" placeholder="Nombre del usuario">
@@ -75,15 +60,15 @@
                         <!-- Privilegios -->
                         <label for="privilegios" class="block m-2">Privilegios</label>
                         <select name="privilegios" id="privilegios" class="block w-full p-2 text-md">
-                            <option value="0">0</option>
+                            <option value="0" >0</option>
                             <option value="1">1</option>
-                            <option value="15">15</option>
+                            <option value="15" selected>15</option>
                         </select>
 
                         <!-- Botones -->
                         <div class="flex flex-row justify-center mt-2">
-                            <button id="btn-guardar" class="bg-green-500 hover:bg-green-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2" type="submit">Guardar</button>
-                            <button id="btn-eliminar" class="bg-red-500 hover:bg-red-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2" type="submit">Eliminar</button>
+                            <button id="btn-guardar" class="bg-green-500 hover:bg-green-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2" type="submit">Registrar</button>
+                            <button id="btn-eliminar" class="bg-red-500 hover:bg-red-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2" style="display: none;" type="button">Eliminar</button>
                         
                         </div>
 

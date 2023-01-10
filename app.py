@@ -1,9 +1,9 @@
-from flask import Flask, request, jsonify, send_file
+from flask import Flask, request, jsonify, send_file, redirect
 from red import Red
 import logging
 
 # logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s', datefmt='%d-%b-%y %H:%M:%S', handlers=[logging.FileHandler('app.log')])
-logging.basicConfig(level=logging.WARNING, format='%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 app = Flask(__name__)
 red = None
@@ -68,6 +68,10 @@ def obtenerInfoTopologia():
     datos del router al que primero se conecta """
     
     # Obteniendo la infomración de la topologia
+    global red
+    if red == None:
+        return redirect("/")
+
     infoTopologia = red.obtenerRouters()
     
     return jsonify(infoTopologia)
@@ -101,7 +105,7 @@ def crearUsuario(router):
     privilegios = credenciales['privilegios']
 
     try:
-        red.crearUsuario(router, user, password, privilegios)
+        red.crearUsuario(router, user, privilegios, password)
         return jsonify({"status": "ok"})        
     except:
         return jsonify({"status": "Error creando usuario"}), 500 
@@ -112,8 +116,9 @@ def consultarUsuarios(router):
     try:
         usuarios = red.consultarUsuarios(router)
         return jsonify(usuarios)
-    except:
-        return jsonify({"status": "Error obteniendo usuarios"}), 500
+    except Exception as e:
+        logging.error(str(e))
+        return jsonify({"status": "Error obteniendo usuarios " + str(e)}), 500
 
 @app.route('/usuarios/<router>', methods=['DELETE'])
 def eliminarUsuario(router):
@@ -121,12 +126,14 @@ def eliminarUsuario(router):
     # Obteniendo parametros desde la peticion
     credenciales = request.get_json()
     user = credenciales['user']
+    logging.debug(user)
 
     try:
         red.eliminarUsuario(router, user)
         return jsonify({"status": "ok"})        
-    except:
-        return jsonify({"status": "Error eliminando usuario"}), 500
+    except Exception as e:
+        logging.error(str(e))
+        return jsonify({"status": "Error eliminando usuario" + str(e)}), 500
 
 @app.route('/usuarios/<router>', methods=['PUT'])
 def actualizarUsuario(router):
@@ -134,14 +141,18 @@ def actualizarUsuario(router):
     # Obteniendo parametros desde la peticion
     credenciales = request.get_json()
     user = credenciales['user']
+    new_user = credenciales['new_user']
     password = credenciales['password']
     privilegios = credenciales['privilegios']
     
+    logging.debug(user+password+privilegios)
+
     try:
-        red.actualizarUsuario(router, user, password, privilegios)
+        red.actualizarUsuario(router, user, new_user, privilegios, password)
         return jsonify({"status": "ok"})
-    except:
-        return jsonify({"status": "Error creando usuario"}), 500 
+    except Exception as e:
+        logging.error(str(e))
+        return jsonify({"status": "Error actualizando usuario" + str(e)}), 500
 
 if __name__ == '__main__':
     app.run(debug=True)

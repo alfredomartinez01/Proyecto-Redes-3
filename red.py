@@ -3,7 +3,6 @@ import logging
 import networkx as nx
 import matplotlib.pyplot as plt
 
-
 class Red():
 
     def __init__(self, ip, name, user="root", password="root"):
@@ -34,19 +33,26 @@ class Red():
     def obtenerRouters(self):
         return self.routers
 
-    def crearUsuario(self, router, user, password, privilegios):
+    def crearUsuario(self, router, user, privilegios, password):
         if router in self.routers:
-            self.routers[router].crearUsuario(user, password, privilegios)
+            router_arreglo = self.routers[router]
+            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            router_cercano.crearUsuario(user, privilegios, password)
+            
         else:
             if router == "global":
                 for router in self.routers:
-                    self.routers[router].crearUsuario(user, password, privilegios)
+                    router_arreglo = self.routers[router]
+                    router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+                    router_cercano.crearUsuario(user, privilegios, password)
             else:
                 raise Exception("Router no encontrado")
 
     def consultarUsuarios(self, router):
         if router in self.routers:
-            return self.routers[router].consultarUsuarios()
+            router_arreglo = self.routers[router]
+            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            return router_cercano.consultarUsuarios()
         else:
             if router == "global":
                 usuarios_cuenta = []
@@ -55,7 +61,10 @@ class Red():
                 # Obtenermos los usuarios de cada router y los agregamos a una lista con su número de repeticiones
                 usuarios_cuenta = {}
                 for router in self.routers:
-                    usuarios_router = self.routers[router].consultarUsuarios()
+                    router_arreglo = self.routers[router]
+                    router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+
+                    usuarios_router = router_cercano.consultarUsuarios()
 
                     for member in usuarios_router:
                         cadena_comparar = member["user"] + member["password"] + member["privilegios"]
@@ -77,29 +86,46 @@ class Red():
                             usuario["global"] = True
                             break
 
-                return usuarios
+                return [usuario for usuario in usuarios if usuario.get("global", False)==True]
             else:
                 raise Exception("Router no encontrado")
     
     def eliminarUsuario(self, router, user):
         if router in self.routers:
-            self.routers[router].eliminarUsuario(user)
+            router_arreglo = self.routers[router]
+            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            if len(router_cercano.consultarUsuarios()) > 1:
+                router_cercano.eliminarUsuario(user)
         else:
             if router == "global":
                 for router in self.routers:
-                    self.routers[router].eliminarUsuario(user)
+                    router_arreglo = self.routers[router]
+                    router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+                    
+                    if len(router_cercano.consultarUsuarios()) <= 1:
+                        return
+                
+                for router in self.routers:
+                    router_arreglo = self.routers[router]
+                    router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+                    router_cercano.eliminarUsuario(user)
+
             else:
                 raise Exception("Router no encontrado")     
             
-    def actualizarUsuario(self, router, user, password, privilegios):
+    def actualizarUsuario(self, router, user, new_user, privilegios, password):
         if router in self.routers:
-            self.routers[router].eliminarUsuario(user)
-            self.routers[router].crearUsuario(user, password, privilegios)
+            router_arreglo = self.routers[router]
+            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            
+            router_cercano.actualizarUsuario(user, new_user, privilegios, password)
         else:
             if router == "global":
                 for router in self.routers:
-                    self.routers[router].eliminarUsuario(user)
-                    self.routers[router].crearUsuario(user, password, privilegios)
+                    router_arreglo = self.routers[router]
+                    router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            
+                    router_cercano.actualizarUsuario(user, new_user, privilegios, password)
             else:
                 raise Exception("Router no encontrado")
 

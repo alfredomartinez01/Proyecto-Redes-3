@@ -55,7 +55,7 @@ class Router:
             enrutador.buscarVecinos(routers)
 
 
-    def crearUsuario(self, user, password, privilegios):        
+    def crearUsuario(self, user, privilegios, password):        
         """ Nos conectamos al router """
         child = pexpect.spawn('telnet '+ self.ip)
         child.expect('Username: ')
@@ -65,74 +65,127 @@ class Router:
         
         """ Configurando el ssh """
         child.expect(self.name+"#")
-        child.sendline('conf t')
+        child.sendline('configure terminal')
         
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('ip domain-name adminredes.escom.ipn.mx')
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('ip ssh rsa keypair-name sshkey')
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('crypto key generate rsa usage-keys label sshkey modulus 1024')
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('ip ssh version 2')
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('ip ssh time-out 30')
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('ip ssh authentication-retries 3')
-        child.expect(self.name+"#")
+        child.expect("#")
         usuario = 'username ' + user + ' privilege '+ privilegios +' password '+password
         child.sendline(usuario)
-        child.expect(self.name+"#")
+        logging.debug(usuario)
+        child.expect("#")
         child.sendline('line vty 0 4')
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('transport input ssh')   
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('login local')
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('exit')     
-        child.expect(self.name+"#")
+        child.expect("#")
         child.sendline('exit')      
 
     def eliminarUsuario(self, user):
         """ Nos conectamos al router """
         child = pexpect.spawn('telnet '+ self.ip)
-        child.expect('Username: ')
+        child.expect('Username:')
         child.sendline(self.user)
-        child.expect('Password: ')
+        child.expect('Password:')
         child.sendline(self.password)
         
         """ Eliminando el usuario ssh """
         child.expect(self.name+"#")
-        child.sendline('conf t')
-        
-        child.expect(self.name+"#")
+        child.sendline('configure terminal')
+        child.expect("#")
         child.sendline('no username '+ user)
+        child.expect("#")
+        child.sendline('exit')
+
+    def actualizarUsuario(self, user, new_user, privilegios, password):
+        """ Nos conectamos al router """
+        child = pexpect.spawn('telnet '+ self.ip)
+        child.expect('Username:')
+        child.sendline(self.user)
+        child.expect('Password:')
+        child.sendline(self.password)
+
+        """ Eliminando el usuario ssh """
         child.expect(self.name+"#")
+        child.sendline('configure terminal')
+        child.expect("#")
+        child.sendline('no username '+ user)
+        child.expect("#")
+
+        """Insertando de nuevo el usuario"""
+        child.sendline('ip domain-name adminredes.escom.ipn.mx')
+        child.expect("#")
+        child.sendline('ip ssh rsa keypair-name sshkey')
+        child.expect("#")
+        child.sendline('crypto key generate rsa usage-keys label sshkey modulus 1024')
+        child.expect("#")
+        child.sendline('ip ssh version 2')
+        child.expect("#")
+        child.sendline('ip ssh time-out 30')
+        child.expect("#")
+        child.sendline('ip ssh authentication-retries 3')
+        child.expect("#")
+        usuario = 'username ' + new_user + ' privilege '+ privilegios +' password '+password
+        logging.debug(usuario)
+        child.sendline(usuario)
+        child.expect("#")
+        child.sendline('line vty 0 4')
+        child.expect("#")
+        child.sendline('transport input ssh')   
+        child.expect("#")
+        child.sendline('login local')
+        child.expect("#")
+        child.sendline('exit')     
+        child.expect("#")
         child.sendline('exit')
 
     def consultarUsuarios(self):
         """ Nos conectamos al router """
         child = pexpect.spawn('telnet '+ self.ip)
-        child.expect('Username: ')
+        child.expect('Username:')
         child.sendline(self.user)
-        child.expect('Password: ')
+        child.expect('Password:')
         child.sendline(self.password)
         
         """ Consultando usuarios ssh """
         child.expect(self.name+"#")
-        child.sendline('sh runn | i user')
+        logging.debug("Consultando usuarios")
+        child.sendline('sh run | i user')
         child.expect(self.name+"#")
-        info_usuarios = child.before.decode().split()
-        
+        info_usuarios = child.before.decode().split("\n")
+        # logging.debug(info_usuarios)
+
         usuarios = []
-        for info_usuario in range(0, len(info_usuarios)):
-            data = info_usuarios[info_usuario].split(" ")
-            usuario={
-                'user': data[1],
-                'password': data[6],
-                'privilegios': data[3]
-            }
-            usuarios.append(usuario)
+        for n_cadena in range(0, len(info_usuarios)):
+            data = info_usuarios[n_cadena].split(" ")
+
+            if data[0] == "username" and data[2] == "privilege":
+                usuario={
+                    'user': data[1],
+                    'password': data[6],
+                    'privilegios': data[3]
+                }
+                usuarios.append(usuario)
+            elif data[0] == "username":
+                usuario={
+                    'user': data[1],
+                    'password': data[4],
+                    'privilegios': "1"
+                }
+                usuarios.append(usuario)
         
         return usuarios
 
