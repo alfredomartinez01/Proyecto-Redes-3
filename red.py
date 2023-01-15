@@ -136,6 +136,14 @@ class Red():
             router_cercano.configurarSNMPV3()
         else:
             raise Exception("Router no encontrado")
+    
+    def consultarMIB(self, router):
+        if router in self.routers:
+            router_arreglo = self.routers[router]
+            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            return router_cercano.consultarMIB()
+        else:
+            raise Exception("Router no encontrado")
 
     def monitorear(self, router, interfaz, periodo):
         if router in self.routers:

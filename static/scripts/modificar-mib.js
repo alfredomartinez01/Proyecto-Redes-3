@@ -22,9 +22,12 @@ document.querySelector("#select-router").addEventListener('change', async (e) =>
     const router = topologia[e.target.value];
 
     const infoMibRouter = await consultarMIB(router);
-    /* Mostrando la información */
     
-
+    /* Mostrando la información */
+    document.getElementById("nombre").value = infoMibRouter.nombre;
+    document.getElementById("descripcion").value = infoMibRouter.descripcion;
+    document.getElementById("contacto").value = infoMibRouter.contacto;
+    document.getElementById("localizacion").value = infoMibRouter.localizacion;
 });
 
 
@@ -73,6 +76,7 @@ async function consultarMIB(router) {
         const response = await fetch(`/mib/${router.name}`);
         const data = await response.json();
         console.log(data);
+        infoMibRouter = data
     } catch (error) {
 
     }

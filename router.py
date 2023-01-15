@@ -3,6 +3,7 @@ import paramiko
 import getpass
 import logging
 import time
+from pysnmp.hlapi import *
 max_buffer = 65535
 
 class Router:
@@ -228,6 +229,43 @@ class Router:
 
         nueva_conexion.close()
 
+
+    def snmpV3_query(self, host, oid):
+        auth = UsmUserData(
+            userName = "root",
+            authKey="root1234",
+            authProtocol=usmHMACSHAAuthProtocol
+        )
+
+        iterator = nextCmd(
+            SnmpEngine(),
+            auth,
+            UdpTransportTarget((host, 161)),
+            ContextData(),
+            ObjectType(ObjectIdentity(oid))
+        )
+
+        errorIndication, errorStatus, errorIndex, varBinds = next(iterator)
+
+        if errorIndication:
+            logging.error(errorIndication)
+        
+        elif errorStatus:
+            logging.error('%s at %s' % (errorStatus.prettyPrint(),
+                                errorIndex and varBinds[int(errorIndex) - 1][0] or '?'))
+        
+        else:
+            for name, val in varBinds:
+                return(str(val))
+
+    def consultarMIB(self):
+        info_mib = {}
+        info_mib["nombre"] = self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.4.0')
+        info_mib["descripcion"] = self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.0.0')
+        info_mib["contacto"] = self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.3.0')
+        info_mib["localizacion"] = self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.5.0')
+        
+        return info_mib
 
     def monitorear(self,intefaz, periodo):
         pass
