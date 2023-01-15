@@ -129,10 +129,11 @@ class Red():
             else:
                 raise Exception("Router no encontrado")
 
-    def configurarSNMP(self, router):
+    def configurarSNMPV3(self, router):
         if router in self.routers:
-            enrutador = Router(self.routers[router]["ip"], router, self.routers[router]["user"], self.routers[router]["password"])
-            enrutador.configurarSNMP()
+            router_arreglo = self.routers[router]
+            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            router_cercano.configurarSNMPV3()
         else:
             raise Exception("Router no encontrado")
 

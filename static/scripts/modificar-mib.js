@@ -1,5 +1,4 @@
 /* VARIABLES Y CONSTANTES */
-let topologia = null;
 let protocolos = null;
 const containerRouter = document.querySelector(".selector-router");
 const formularioMib = document.querySelector(".info-mib");
@@ -7,7 +6,7 @@ const formularioMib = document.querySelector(".info-mib");
 /* LISTENERS */
 // Documento
 document.addEventListener('DOMContentLoaded', async () => {
-    await obtenerInfoTopologia();
+    const topologia = await obtenerInfoTopologia();
 
     /* Mostrando los routers */
     const selectRouter = document.querySelector("#select-router");
@@ -43,27 +42,29 @@ async function obtenerInfoTopologia() { // Consultamos la API para obtener la in
                 "interfaces": data[router]['interfaces'] || null
             });
         }
+        console.log(routers)
         topologia = routers;
-    } catch (error) {
 
+    } catch (error) {
+        topologia = [
+            {
+                name: "R1",
+                ip: "192.168.0.5",
+                interfaces: [1, 2, 3, 4]
+            },
+            {
+                name: "R2",
+                ip: "192.168.0.1",
+                interfaces: [1, 2, 3, 4]
+            },
+            {
+                name: "R3",
+                ip: "192.168.0.15",
+                interfaces: [1, 2, 3, 4]
+            },
+        ];
     }
-    topologia = [
-        {
-            name: "R1",
-            ip: "192.168.0.5",
-            interfaces: [1, 2, 3, 4]
-        },
-        {
-            name: "R2",
-            ip: "192.168.0.1",
-            interfaces: [1, 2, 3, 4]
-        },
-        {
-            name: "R3",
-            ip: "192.168.0.15",
-            interfaces: [1, 2, 3, 4]
-        },
-    ];
+    return topologia;
 }
 
 async function consultarMIB(router) {

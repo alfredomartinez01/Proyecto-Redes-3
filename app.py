@@ -37,8 +37,9 @@ def mib():
 def consultarMIB(router):
     """ Consultando informacion de la MIB de router """
     
-    # Levantando protocolo SNMP en el router
-    # red.configurarSNMP(router)
+    # Levantando protocolo SNMPv3 en el router
+    global red
+    red.configurarSNMPV3(router)
     
     return jsonify({"status": "ok"})
     

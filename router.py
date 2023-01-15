@@ -1,7 +1,9 @@
 import pexpect
+import paramiko
 import getpass
 import logging
 import time
+max_buffer = 65535
 
 class Router:
     def __init__(self, ip, name, user="root", password="root"):
@@ -189,27 +191,43 @@ class Router:
         
         return usuarios
 
-    def configurarSNMP(self):
+    def clear_buffer(self, conexion):
+        if conexion.recv_ready():
+            return conexion.recv(max_buffer)
+
+    def configurarSNMPV3(self):
         mensaje = "Conectando a " + self.name
         logging.debug(mensaje)
 
         """ Nos conectamos al router """
-        child = pexpect.spawn('telnet '+ self.ip)
-        child.expect('Username: ')
-        child.sendline(self.user)
-        child.expect('Password: ')
-        child.sendline(self.password)
+        conexion = paramiko.SSHClient()
+        conexion.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        conexion.connect(self.ip, username=self.user, password=self.password, look_for_keys=False, allow_agent=False)
+        nueva_conexion = conexion.invoke_shell()
+        self.clear_buffer(nueva_conexion)
+        time.sleep(2)
+        nueva_conexion.send("terminal length 0 \n")
+        self.clear_buffer(nueva_conexion)
         
         """ Configuramos el snmp"""
-        child.expect(self.name+"#")
-        child.sendline("snpm-server comunity | i snmp");
-        child.expect(self.name+"#")
-        child.sendline("snmp-server enable traps snmp linkdown linkup");
-        child.expect(self.name+"#")
-        child.sendline("snmp-server host 10.0.1.1 version 2c comun_pruebas");
-        child.expect(self.name+"#")
-        
-        
+        nueva_conexion.send("conf term\n")
+        time.sleep(2)
+        self.clear_buffer(nueva_conexion)
+        nueva_conexion.send("snmp-server group infoMIB v3 auth read MIBRead write MIBWrite\n")
+        time.sleep(2)
+        self.clear_buffer(nueva_conexion)
+        nueva_conexion.send("snmp-server user root infoMIB v3 auth sha root1234\n")
+        time.sleep(2)
+        self.clear_buffer(nueva_conexion)
+        nueva_conexion.send("snmp-server view MIBRead iso included\n")
+        time.sleep(2)
+        self.clear_buffer(nueva_conexion)
+        nueva_conexion.send("snmp-server view MIBWrite iso included\n")
+        time.sleep(2)
+        self.clear_buffer(nueva_conexion)
+
+        nueva_conexion.close()
+
 
     def monitorear(self,intefaz, periodo):
         pass
