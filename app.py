@@ -37,16 +37,37 @@ def mib():
 def consultarMIB(router):
     """ Consultando informacion de la MIB de router """
     
-    # Levantando protocolo SNMPv3 en el router
     global red
     try:
-        # red.configurarSNMPV3(router)
+        # Levantando protocolo SNMPv3 en el router
+        red.configurarSNMPV3(router)
+        # Consultando info de la mib
         info_mib = red.consultarMIB(router)
         return jsonify(info_mib)
 
     except Exception as e:
         logging.error(str(e))
         return jsonify({"status": "Error consultando mib " + str(e)}), 500
+
+@app.post('/mib/<router>')
+def modificarMIB(router):
+    """ Modificando informacion de la MIB de router """
+    
+    # Obteniendo informacion de la peticion
+    info_mib = request.get_json()
+    nombre = info_mib['nombre']
+    descripcion = info_mib['descripcion']
+    contacto = info_mib['contacto']
+    localizacion = info_mib['localizacion']
+
+    global red
+    try:
+        red.modificarMIB(router, nombre, descripcion, contacto, localizacion)
+        return jsonify({"status": "ok"}) 
+
+    except Exception as e:
+        logging.error(str(e))
+        return jsonify({"status": "Error modificando mib " + str(e)}), 500
     
 @app.post('/topologia')
 def obtenerTopologia():

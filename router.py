@@ -230,20 +230,31 @@ class Router:
         nueva_conexion.close()
 
 
-    def snmpV3_query(self, host, oid):
+    def snmpV3_query(self, host, oid, mode="lectura", valor=""):
         auth = UsmUserData(
             userName = "root",
             authKey="root1234",
             authProtocol=usmHMACSHAAuthProtocol
         )
-
-        iterator = nextCmd(
-            SnmpEngine(),
-            auth,
-            UdpTransportTarget((host, 161)),
-            ContextData(),
-            ObjectType(ObjectIdentity(oid))
-        )
+        if mode == "lectura":
+            iterator = getCmd(
+                SnmpEngine(),
+                auth,
+                UdpTransportTarget((host, 161)),
+                ContextData(),
+                ObjectType(ObjectIdentity(oid))
+            )
+        else:
+            iterator = setCmd(
+                SnmpEngine(),
+                auth,
+                UdpTransportTarget((host, 161)),
+                ContextData(),
+                ObjectType(
+                    ObjectIdentity(oid),
+                    OctetString(valor)
+                )
+            )
 
         errorIndication, errorStatus, errorIndex, varBinds = next(iterator)
 
@@ -260,12 +271,18 @@ class Router:
 
     def consultarMIB(self):
         info_mib = {}
-        info_mib["nombre"] = self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.4.0')
-        info_mib["descripcion"] = self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.0.0')
-        info_mib["contacto"] = self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.3.0')
-        info_mib["localizacion"] = self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.5.0')
+        info_mib["nombre"] = self.snmpV3_query(self.ip, '1.3.6.1.2.1.1.5.0')
+        info_mib["descripcion"] = self.snmpV3_query(self.ip, '1.3.6.1.2.1.1.1.0')
+        info_mib["contacto"] = self.snmpV3_query(self.ip, '1.3.6.1.2.1.1.4.0')
+        info_mib["localizacion"] = self.snmpV3_query(self.ip, '1.3.6.1.2.1.1.6.0')
         
         return info_mib
+    
+    def modificarMIB(self, nombre, descripcion, contacto, localizacion):        
+        # self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.5.0', mode="escritura", valor=nombre)
+        # self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.1.0', mode="escritura", valor=descripcion)
+        self.snmpV3_query(self.ip, '1.3.6.1.2.1.1.4.0', mode="escritura", valor=contacto)
+        self.snmpV3_query(self.ip, '1.3.6.1.2.1.1.6.0', mode="escritura", valor=localizacion)
 
     def monitorear(self,intefaz, periodo):
         pass

@@ -140,8 +140,17 @@ class Red():
     def consultarMIB(self, router):
         if router in self.routers:
             router_arreglo = self.routers[router]
+            logging.debug(router_arreglo)
             router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
             return router_cercano.consultarMIB()
+        else:
+            raise Exception("Router no encontrado")
+
+    def modificarMIB(self, router, nombre, descripcion, contacto, localizacion):
+        if router in self.routers:
+            router_arreglo = self.routers[router]
+            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            return router_cercano.modificarMIB(nombre, descripcion, contacto, localizacion)
         else:
             raise Exception("Router no encontrado")
 

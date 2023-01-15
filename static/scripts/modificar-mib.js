@@ -28,6 +28,34 @@ document.querySelector("#select-router").addEventListener('change', async (e) =>
     document.getElementById("descripcion").value = infoMibRouter.descripcion;
     document.getElementById("contacto").value = infoMibRouter.contacto;
     document.getElementById("localizacion").value = infoMibRouter.localizacion;
+
+    /* Asignando onsumbit al router */
+    document.getElementById("info-mib").onsubmit = async (e) => {
+        e.preventDefault();
+        const info_mib = {
+            "nombre": document.getElementById("nombre").value,
+            "descripcion": document.getElementById("descripcion").value,
+            "contacto": document.getElementById("contacto").value,
+            "localizacion": document.getElementById("localizacion").value
+        } 
+
+        const nombreRouter = topologia[document.querySelector("#select-router")?.value]?.name ?? "global";
+        try {
+            const response = await fetch('/mib/' + nombreRouter, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(info_mib)
+            });
+            const data= await response.json();
+            console.log(data)
+            if (data.status == "ok")
+                window.location.href = "http://127.0.0.1:5000/mib"
+        }
+        catch {
+        }
+    }
 });
 
 
