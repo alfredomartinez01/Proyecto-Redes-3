@@ -198,6 +198,8 @@ def obtenerProtocolos(router):
 def activarProtocolo(router):
     """ Activa un protocolo en un router """
     global red
+
+    nombreProtocolo = request.get_json()['nombreProtocolo']
     
     try:
         red.modificarProtocolo(router, nombreProtocolo)
@@ -212,6 +214,8 @@ def desactivarProtocolo(router):
     """ Desactiva un protocolo en un router """
     global red
     
+    nombreProtocolo = request.get_json()['nombreProtocolo']
+
     try:
         red.modificarProtocolo(router, nombreProtocolo, mode=False)
         return jsonify({"status": "ok"})

@@ -1,5 +1,6 @@
 /* VARIABLES Y CONSTANTES */
 let protocolos = null;
+let topologia = null;
 const containerRouter = document.querySelector(".selector-router");
 const containerProtocolo = document.querySelector(".protocolos");
 
@@ -36,14 +37,16 @@ document.querySelector("#select-router").addEventListener('change', async (e) =>
                 <p class="text-center">${protocolo.estado}</p>
             </td>
             <td>
-                <button id="btn-desactivar-rip"
-                    class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2 my-1"
-                    onclick="activarProtocolo(${index})"
-                    >Activar</button>
-                <button id="btn-desactivar-rip"
-                    class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2 my-1"
-                    onclick="desactivarProtocolo(${index})"
-                    >Desactivar</button>
+                ${protocolo.estado != "Activo"
+                ? `<button id="btn-activar-protocolo"
+                class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2 my-1"
+                onclick="activarProtocolo(${index})"
+                >Activar</button>`
+                : `<button id="btn-desactivar-protocolo"
+                class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2 my-1"
+                onclick="desactivarProtocolo(${index})"
+                >Desactivar</button>`
+                }                
             </td>
         </tr>
 
@@ -96,6 +99,7 @@ async function obtenerProtocolos(nombreRouter) {
     try {
         const response = await fetch('/protocolos/' + nombreRouter);
         const data = await response.json();
+        console.log(data)
         protocolos = data
 
     } catch (error) {
@@ -123,9 +127,43 @@ async function obtenerProtocolos(nombreRouter) {
 }
 
 async function activarProtocolo(index) {
+    const nombreProtocolo = protocolos[index].nombre;
 
+    const nombreRouter = topologia[document.querySelector("#select-router")?.value]?.name;
+        try {
+            const response = await fetch('/protocolos/' + nombreRouter, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({nombreProtocolo})
+            });
+            const data= await response.json();
+            console.log(data)
+            if (data.status == "ok")
+                window.location.href = "http://127.0.0.1:5000/protocolos"
+        }
+        catch {
+        }
 }
 
 async function desactivarProtocolo(index) {
+    const nombreProtocolo = protocolos[index].nombre;
 
+    const nombreRouter = topologia[document.querySelector("#select-router")?.value]?.name;
+        try {
+            const response = await fetch('/protocolos/' + nombreRouter, {
+                method: "DELETE",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({nombreProtocolo})
+            });
+            const data= await response.json();
+            console.log(data)
+            if (data.status == "ok")
+                window.location.href = "http://127.0.0.1:5000/protocolos"
+        }
+        catch {
+        }
 }

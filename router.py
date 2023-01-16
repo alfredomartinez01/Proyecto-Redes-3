@@ -1,9 +1,11 @@
 import pexpect
-#import paramiko
+import paramiko
 import getpass
 import logging
 import time
-#from pysnmp.hlapi import *
+from pysnmp.hlapi import *
+import json
+
 max_buffer = 65535
 
 class Router:
@@ -341,4 +343,4 @@ class Router:
         
         """ Guardamos el estado del protocolo """
         with open("dispositivos.json", "w") as file:
-            json.dump(dispositivos, file)
+            json.dump(dispositivos, file, indent=4)

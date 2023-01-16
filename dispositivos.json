@@ -1,7 +1,7 @@
 [
     {
         "nombre": "Enrutador-4",
-        "protocolos":[
+        "protocolos": [
             {
                 "nombre": "OSPF",
                 "estado": "Activo",
