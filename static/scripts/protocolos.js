@@ -24,8 +24,8 @@ document.querySelector("#select-router").addEventListener('change', async (e) =>
     /* Mostrando la tabla */
     const tabla = document.querySelector("#tabla-protocolos");
 
-    await obtenerProtocolos();
-    console.log(protocolos);
+    const protocolos = await obtenerProtocolos(router?.name);
+
     tabla.innerHTML = `
         ${protocolos.map((protocolo, index) => `
         <tr class="border-t border-gray-500">
@@ -92,25 +92,34 @@ async function obtenerInfoTopologia() { // Consultamos la API para obtener la in
     return topologia;
 }
 
-async function obtenerProtocolos() {
-    protocolos = [
-        {
-            nombre: "RIP",
-            estado: "Activo"
-        },
-        {
-            nombre: "OSPF",
-            estado: "Activo"
-        },
-        {
-            nombre: "EIGRP",
-            estado: "Activo"
-        },
-        {
-            nombre: "BGP",
-            estado: "Inactivo"
-        },
-    ];
+async function obtenerProtocolos(nombreRouter) {
+    try {
+        const response = await fetch('/protocolos/' + nombreRouter);
+        const data = await response.json();
+        protocolos = data
+
+    } catch (error) {
+        protocolos = [
+            {
+                nombre: "RIP",
+                estado: "Activo"
+            },
+            {
+                nombre: "OSPF",
+                estado: "Activo"
+            },
+            {
+                nombre: "EIGRP",
+                estado: "Activo"
+            },
+            {
+                nombre: "BGP",
+                estado: "Inactivo"
+            },
+        ];
+    }
+    return protocolos;
+    
 }
 
 async function activarProtocolo(index) {

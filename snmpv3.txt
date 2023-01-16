@@ -1,0 +1,7 @@
+/* Router */
+snmp-server group V3Group v3 auth read V3Read write V3Write
+snmp-server user V3User V3Group v3 auth sha root1234
+snmp-server view V3Read iso included
+snmp-server view V3Write iso included
+
+/* pysnmp */

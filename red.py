@@ -159,3 +159,19 @@ class Red():
             self.routers[router].monitorear(interfaz, periodo)
         else:
             raise Exception("Router no encontrado")
+        
+    def obtenerProtocolos(self, router):
+        if router in self.routers:
+            router_arreglo = self.routers[router]
+            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            return router_cercano.obtenerProtocolos()
+        else:
+            raise Exception("Router no encontrado")
+
+    def modificarProtocolo(self, router, nombreProtocolo, mode=True):
+        if router in self.routers:
+            router_arreglo = self.routers[router]
+            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
+            router_cercano.modificarProtocolo(nombreProtocolo, mode)
+        else:
+            raise Exception("Router no encontrado")

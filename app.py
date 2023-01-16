@@ -181,5 +181,45 @@ def actualizarUsuario(router):
         logging.error(str(e))
         return jsonify({"status": "Error actualizando usuario" + str(e)}), 500
 
+@app.get('/protocolos/<router>')
+def obtenerProtocolos(router):
+    """ Obtiene los protocolos de un router """
+    global red
+    
+    try:
+        protocolos = red.obtenerProtocolos(router)
+        return jsonify(protocolos)
+    
+    except Exception as e:
+        logging.error(str(e))
+        return jsonify({"status": "Error obteniendo protocolos" + str(e)}), 500
+
+@app.post('/protocolos/<router>')
+def activarProtocolo(router):
+    """ Activa un protocolo en un router """
+    global red
+    
+    try:
+        red.modificarProtocolo(router, nombreProtocolo)
+        return jsonify({"status": "ok"})
+    
+    except Exception as e:
+        logging.error(str(e))
+        return jsonify({"status": "Error activando protocolo " + str(e)}), 500    
+
+@app.route('/protocolos/<router>', methods=['DELETE'])
+def desactivarProtocolo(router):
+    """ Desactiva un protocolo en un router """
+    global red
+    
+    try:
+        red.modificarProtocolo(router, nombreProtocolo, mode=False)
+        return jsonify({"status": "ok"})
+    
+    except Exception as e:
+        logging.error(str(e))
+        return jsonify({"status": "Error desactivando protocolo " + str(e)}), 500  
+
+
 if __name__ == '__main__':
     app.run(debug=True)

@@ -1,9 +1,9 @@
 import pexpect
-import paramiko
+#import paramiko
 import getpass
 import logging
 import time
-from pysnmp.hlapi import *
+#from pysnmp.hlapi import *
 max_buffer = 65535
 
 class Router:
@@ -286,3 +286,59 @@ class Router:
 
     def monitorear(self,intefaz, periodo):
         pass
+    
+    def obtenerProtocolos(self):
+        with open("dispositivos.json", "r") as file:
+            dispositivos = json.load(file)
+        
+        for dispositivo in dispositivos:
+            if dispositivo["nombre"] == self.name:
+                return [
+                    {"nombre" : protocolo["nombre"], "estado" : protocolo["estado"]} for protocolo in dispositivo["protocolos"]
+                ]
+    
+    def modificarProtocolo(self, nombreProtocolo, mode):
+        with open("dispositivos.json", "r") as file:
+            dispositivos = json.load(file)
+        
+        """ Obtenemos los comandos y editamos el estado del protocolo """
+        for dispositivo in dispositivos:
+            if dispositivo["nombre"] == self.name:
+                for protocolo in dispositivo["protocolos"]:
+                    if protocolo["nombre"] == nombreProtocolo:
+                        if mode:
+                            protocolo["estado"] = "Activo"
+                            comandos = protocolo["com_activacion"]
+                        else:
+                            protocolo["estado"] = "Inactivo"
+                            comandos = protocolo["com_desactivacion"]
+        
+        mensaje = "Conectando a " + self.name
+        logging.debug(mensaje)
+
+        """ Nos conectamos al router """
+        conexion = paramiko.SSHClient()
+        conexion.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+        conexion.connect(self.ip, username=self.user, password=self.password, look_for_keys=False, allow_agent=False)
+        nueva_conexion = conexion.invoke_shell()
+        self.clear_buffer(nueva_conexion)
+        time.sleep(2)
+        nueva_conexion.send("terminal length 0 \n")
+        self.clear_buffer(nueva_conexion)
+        
+        """ Configuramos el protocolo"""
+        nueva_conexion.send("conf term\n")
+        time.sleep(2)
+        self.clear_buffer(nueva_conexion)
+        
+        """ Ejecutamos los comandos """
+        for comando in comandos:
+            nueva_conexion.send(comando + "\n")
+            time.sleep(2)
+            self.clear_buffer(nueva_conexion)
+
+        nueva_conexion.close()
+        
+        """ Guardamos el estado del protocolo """
+        with open("dispositivos.json", "w") as file:
+            json.dump(dispositivos, file)
