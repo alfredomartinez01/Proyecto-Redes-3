@@ -39,10 +39,13 @@ document.querySelector("#select-router").addEventListener('change', async (e) =>
                 <p class="text-center">${usuario.privilegios}</p>
             </td>
             <td>
-                <button id="btn-editar"
-                    class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2 my-1"
-                    onclick="editarUsuario(${index})"
-                    >Editar</button>
+                ${index != 0 
+                    ? `<button id="btn-editar"
+                class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2 my-1"
+                onclick="editarUsuario(${index})"
+                >Editar</button>`
+                :""}
+                
             </td>
         </tr>
 
