@@ -2,6 +2,7 @@ from router import Router
 import logging
 import networkx as nx
 import matplotlib.pyplot as plt
+import json
 
 class Red():
 
@@ -160,18 +161,33 @@ class Red():
         else:
             raise Exception("Router no encontrado")
         
-    def obtenerProtocolos(self, router):
-        if router in self.routers:
-            router_arreglo = self.routers[router]
-            router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
-            return router_cercano.obtenerProtocolos()
-        else:
-            raise Exception("Router no encontrado")
+    def obtenerProtocolos(self):
+        with open("protocolos.json", "r") as file:
+            protocolos = json.load(file)
 
-    def modificarProtocolo(self, router, nombreProtocolo, mode=True):
-        if router in self.routers:
+        protocolos_filtrados = []
+        for protocolo in protocolos:
+            protocolo_filtrado = {
+                'nombre': protocolo["nombre"],
+                'estado': protocolo["estado"]
+            }
+            protocolos_filtrados.append(protocolo_filtrado)
+
+        return protocolos
+
+    def modificarProtocolo(self, nombreProtocolo, mode=True):
+        # Si se desactiva, comprobamos que uno este activo
+        protocolos = self.obtenerProtocolos()
+        activos = 0
+        for protocolo in protocolos:
+            if protocolo["estado"] == "Activo":
+                activos += 1
+
+        if activos <= 1 and not mode:
+            raise Exception("Debe haber al menos un protocolo activo")
+
+        # Configuramos el protocolo en cada router
+        for router in self.routers:
             router_arreglo = self.routers[router]
             router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
             router_cercano.modificarProtocolo(nombreProtocolo, mode)
-        else:
-            raise Exception("Router no encontrado")

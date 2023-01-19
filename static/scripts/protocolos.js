@@ -1,32 +1,17 @@
 /* VARIABLES Y CONSTANTES */
 let protocolos = null;
 let topologia = null;
-const containerRouter = document.querySelector(".selector-router");
 const containerProtocolo = document.querySelector(".protocolos");
 
 /* LISTENERS */
 // Documento
 document.addEventListener('DOMContentLoaded', async () => {
-    const topologia = await obtenerInfoTopologia();
-
-    /* Mostrando los routers */
-    const selectRouter = document.querySelector("#select-router");
-    selectRouter.innerHTML = `
-        <option value="">Selecciona el router</option>
-        ${topologia.map((router, index) => `<option value="${index}">${router.name}</option>`).join('')}
-    `;
-
-    containerRouter.style.display = "block";
-});
-// Select router
-document.querySelector("#select-router").addEventListener('change', async (e) => {
-    const router = topologia[e.target.value];
-
     /* Mostrando la tabla */
     const tabla = document.querySelector("#tabla-protocolos");
 
-    const protocolos = await obtenerProtocolos(router?.name);
+    const protocolos = await obtenerProtocolos();
 
+    const activos = protocolos.filter(protocolo => protocolo.estado == "Activo").length;
     tabla.innerHTML = `
         ${protocolos.map((protocolo, index) => `
         <tr class="border-t border-gray-500">
@@ -42,10 +27,13 @@ document.querySelector("#select-router").addEventListener('change', async (e) =>
                 class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2 my-1"
                 onclick="activarProtocolo(${index})"
                 >Activar</button>`
-                : `<button id="btn-desactivar-protocolo"
-                class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2 my-1"
-                onclick="desactivarProtocolo(${index})"
-                >Desactivar</button>`
+                : `${activos > 1
+                    ? `<button id="btn-desactivar-protocolo"
+                    class="bg-sky-500 hover:bg-sky-800 text-slate-100 duration-200 font-bold px-2 py-1 rounded-md text-center text-sm mr-2 my-1"
+                    onclick="desactivarProtocolo(${index})"
+                    >Desactivar</button>`
+                    : ""
+                    }`
                 }                
             </td>
         </tr>
@@ -95,14 +83,15 @@ async function obtenerInfoTopologia() { // Consultamos la API para obtener la in
     return topologia;
 }
 
-async function obtenerProtocolos(nombreRouter) {
+async function obtenerProtocolos() {
     try {
-        const response = await fetch('/protocolos/' + nombreRouter);
+        const response = await fetch('/modif-protocolos');
         const data = await response.json();
         console.log(data)
         protocolos = data
 
     } catch (error) {
+        console.log(error)
         protocolos = [
             {
                 nombre: "RIP",
@@ -129,9 +118,8 @@ async function obtenerProtocolos(nombreRouter) {
 async function activarProtocolo(index) {
     const nombreProtocolo = protocolos[index].nombre;
 
-    const nombreRouter = topologia[document.querySelector("#select-router")?.value]?.name;
         try {
-            const response = await fetch('/protocolos/' + nombreRouter, {
+            const response = await fetch('/modif-protocolos', {
                 method: "POST",
                 headers: {
                     'Content-Type': 'application/json'
@@ -150,9 +138,8 @@ async function activarProtocolo(index) {
 async function desactivarProtocolo(index) {
     const nombreProtocolo = protocolos[index].nombre;
 
-    const nombreRouter = topologia[document.querySelector("#select-router")?.value]?.name;
         try {
-            const response = await fetch('/protocolos/' + nombreRouter, {
+            const response = await fetch('/modif-protocolos', {
                 method: "DELETE",
                 headers: {
                     'Content-Type': 'application/json'

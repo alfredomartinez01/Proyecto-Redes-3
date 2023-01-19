@@ -289,31 +289,28 @@ class Router:
     def monitorear(self,intefaz, periodo):
         pass
     
-    def obtenerProtocolos(self):
-        with open("dispositivos.json", "r") as file:
-            dispositivos = json.load(file)
-        
-        for dispositivo in dispositivos:
-            if dispositivo["nombre"] == self.name:
-                return [
-                    {"nombre" : protocolo["nombre"], "estado" : protocolo["estado"]} for protocolo in dispositivo["protocolos"]
-                ]
-    
     def modificarProtocolo(self, nombreProtocolo, mode):
-        with open("dispositivos.json", "r") as file:
-            dispositivos = json.load(file)
+        with open("protocolos.json", "r") as file:
+            protocolos = json.load(file)
         
+
         """ Obtenemos los comandos y editamos el estado del protocolo """
-        for dispositivo in dispositivos:
-            if dispositivo["nombre"] == self.name:
-                for protocolo in dispositivo["protocolos"]:
-                    if protocolo["nombre"] == nombreProtocolo:
+        comandos = []
+        for protocolo in protocolos:
+            if protocolo["nombre"] == nombreProtocolo:
+                for dispositivo in protocolo["routers"]:
+                    if dispositivo["nombre"] == self.name:
                         if mode:
                             protocolo["estado"] = "Activo"
-                            comandos = protocolo["com_activacion"]
+                            comandos = dispositivo["com_activacion"]
                         else:
                             protocolo["estado"] = "Inactivo"
-                            comandos = protocolo["com_desactivacion"]
+                            comandos = dispositivo["com_desactivacion"]
+                        break
+        
+        if len(comandos) == 0:
+            # raise Exception("Comandos router no encontrado")
+            return
         
         mensaje = "Conectando a " + self.name
         logging.debug(mensaje)
@@ -342,5 +339,5 @@ class Router:
         nueva_conexion.close()
         
         """ Guardamos el estado del protocolo """
-        with open("dispositivos.json", "w") as file:
-            json.dump(dispositivos, file, indent=4)
+        with open("protocolos.json", "w") as file:
+            json.dump(protocolos, file, indent=4)

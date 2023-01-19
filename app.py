@@ -181,43 +181,43 @@ def actualizarUsuario(router):
         logging.error(str(e))
         return jsonify({"status": "Error actualizando usuario" + str(e)}), 500
 
-@app.get('/protocolos/<router>')
-def obtenerProtocolos(router):
-    """ Obtiene los protocolos de un router """
+@app.get('/modif-protocolos')
+def obtenerProtocolos():
+    """ Obtiene los protocolos disponibles """
     global red
     
     try:
-        protocolos = red.obtenerProtocolos(router)
+        protocolos = red.obtenerProtocolos()
         return jsonify(protocolos)
     
     except Exception as e:
         logging.error(str(e))
         return jsonify({"status": "Error obteniendo protocolos" + str(e)}), 500
 
-@app.post('/protocolos/<router>')
-def activarProtocolo(router):
+@app.post('/modif-protocolos')
+def activarProtocolo():
     """ Activa un protocolo en un router """
     global red
 
     nombreProtocolo = request.get_json()['nombreProtocolo']
     
     try:
-        red.modificarProtocolo(router, nombreProtocolo)
+        red.modificarProtocolo(nombreProtocolo)
         return jsonify({"status": "ok"})
     
     except Exception as e:
         logging.error(str(e))
         return jsonify({"status": "Error activando protocolo " + str(e)}), 500    
 
-@app.route('/protocolos/<router>', methods=['DELETE'])
-def desactivarProtocolo(router):
+@app.route('/modif-protocolos', methods=['DELETE'])
+def desactivarProtocolo():
     """ Desactiva un protocolo en un router """
     global red
     
     nombreProtocolo = request.get_json()['nombreProtocolo']
 
     try:
-        red.modificarProtocolo(router, nombreProtocolo, mode=False)
+        red.modificarProtocolo(nombreProtocolo, mode=False)
         return jsonify({"status": "ok"})
     
     except Exception as e:

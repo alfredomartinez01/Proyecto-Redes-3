@@ -1,0 +1,65 @@
+[
+    {
+        "nombre": "OSPF",
+        "estado": "Inactivo",
+        "routers": [
+            {
+                "nombre": "Enrutador-1",
+                "com_activacion": [
+                    "router ospf 1",
+                    "redistribute static subnets",
+                    "redistribute rip subnets",
+                    "network 10.0.1.0 0.0.0.255 area 0",
+                    "network 10.0.2.0 0.0.0.255 area 0",
+                    "network 10.0.3.0 0.0.0.255 area 0",
+                    "network 10.0.4.0 0.0.0.255 area 0"
+                ],
+                "com_desactivacion": [
+                    "no router ospf 1"
+                ]
+            }
+        ]
+    },
+    {
+        "nombre": "RIP",
+        "estado": "Inactivo",
+        "routers": [
+            {
+                "nombre": "Enrutador-1",
+                "com_activacion": [
+                    "router ospf 1",
+                    "redistribute static subnets",
+                    "redistribute rip subnets",
+                    "network 10.0.1.0 0.0.0.255 area 0",
+                    "network 10.0.2.0 0.0.0.255 area 0",
+                    "network 10.0.3.0 0.0.0.255 area 0",
+                    "network 10.0.4.0 0.0.0.255 area 0"
+                ],
+                "com_desactivacion": [
+                    "no router ospf 1"
+                ]
+            }
+        ]
+    },
+    {
+        "nombre": "STATIC",
+        "estado": "Activo",
+        "routers": [
+            {
+                "nombre": "Enrutador-1",
+                "com_activacion": [
+                    "router ospf 1",
+                    "redistribute static subnets",
+                    "redistribute rip subnets",
+                    "network 10.0.1.0 0.0.0.255 area 0",
+                    "network 10.0.2.0 0.0.0.255 area 0",
+                    "network 10.0.3.0 0.0.0.255 area 0",
+                    "network 10.0.4.0 0.0.0.255 area 0"
+                ],
+                "com_desactivacion": [
+                    "no router ospf 1"
+                ]
+            }
+        ]
+    }
+]
