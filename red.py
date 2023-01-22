@@ -187,7 +187,7 @@ class Red():
             raise Exception("Debe haber al menos un protocolo activo")
 
         # Configuramos el protocolo en cada router
-        for router in self.routers:
+        for router in reversed(self.routers):
             router_arreglo = self.routers[router]
             router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
             router_cercano.modificarProtocolo(nombreProtocolo, mode)

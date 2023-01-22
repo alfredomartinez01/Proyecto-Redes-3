@@ -309,34 +309,31 @@ class Router:
                         break
         
         if len(comandos) == 0:
-            # raise Exception("Comandos router no encontrado")
+            raise Exception("Comandos router no encontrado")
             return
         
-        mensaje = "Conectando a " + self.name
+        mensaje = "Modificando protocolo en " + self.name
         logging.debug(mensaje)
 
         """ Nos conectamos al router """
-        conexion = paramiko.SSHClient()
-        conexion.set_missing_host_key_policy(paramiko.AutoAddPolicy())
-        conexion.connect(self.ip, username=self.user, password=self.password, look_for_keys=False, allow_agent=False)
-        nueva_conexion = conexion.invoke_shell()
-        self.clear_buffer(nueva_conexion)
-        time.sleep(2)
-        nueva_conexion.send("terminal length 0 \n")
-        self.clear_buffer(nueva_conexion)
+        child = pexpect.spawn('telnet '+ self.ip)
+        child.expect('Username: ')
+        child.sendline(self.user)
+        child.expect('Password: ')
+        child.sendline(self.password)
         
-        """ Configuramos el protocolo"""
-        nueva_conexion.send("conf term\n")
-        time.sleep(2)
-        self.clear_buffer(nueva_conexion)
+        """ Configurando el ssh """
+        child.expect(self.name+"#")
+        child.sendline('configure terminal')
         
+        child.expect("#")
         """ Ejecutamos los comandos """
         for comando in comandos:
-            nueva_conexion.send(comando + "\n")
-            time.sleep(2)
-            self.clear_buffer(nueva_conexion)
+            #logging.debug(comando)
+            child.sendline(comando)
+            child.expect("#")
 
-        nueva_conexion.close()
+        child.sendline('exit')
         
         """ Guardamos el estado del protocolo """
         with open("protocolos.json", "w") as file:
