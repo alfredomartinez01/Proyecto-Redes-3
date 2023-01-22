@@ -1,0 +1,43 @@
+Jan 17 12:31:26.937 HYPERVISOR: Release 0.2.17-x86/Windows (tag 2017072410)
+Jan 17 12:31:26.939 HYPERVISOR: Started on IP = localhost, TCP port = 63053.
+Jan 17 12:31:27.150 HYPERVISOR: exec_cmd: hypervisor version 
+Jan 17 12:31:27.151 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\kit_5\Downloads\Administración de Servicios de Red\Proyecto\GNS3\project-files\dynamips 
+Jan 17 12:31:27.151 GENERAL: working_dir=C:\Users\kit_5\Downloads\Administración de Servicios de Red\Proyecto\GNS3\project-files\dynamips
+Jan 17 12:31:27.151 HYPERVISOR: exec_cmd: hypervisor working_dir C:\Users\kit_5\Downloads\Administración de Servicios de Red\Proyecto\GNS3\project-files\dynamips\916b1212-e053-4da4-9f40-0be4fa9d32c6 
+Jan 17 12:31:27.156 GENERAL: working_dir=C:\Users\kit_5\Downloads\Administración de Servicios de Red\Proyecto\GNS3\project-files\dynamips\916b1212-e053-4da4-9f40-0be4fa9d32c6
+Jan 17 12:31:27.156 HYPERVISOR: exec_cmd: vm create Enrutador-1 1 c7200 
+Jan 17 12:31:27.159 VM: VM Enrutador-1 created.
+Jan 17 12:31:27.159 HYPERVISOR: exec_cmd: vm set_con_tcp_port Enrutador-1 5003 
+Jan 17 12:31:27.160 HYPERVISOR: exec_cmd: c7200 get_mac_addr Enrutador-1 
+Jan 17 12:31:27.160 HYPERVISOR: exec_cmd: vm get_status Enrutador-1 
+Jan 17 12:31:27.161 HYPERVISOR: exec_cmd: vm slot_add_binding Enrutador-1 0 0 C7200-IO-FE 
+Jan 17 12:31:27.161 HYPERVISOR: exec_cmd: vm set_disk0 Enrutador-1 0 
+Jan 17 12:31:27.162 HYPERVISOR: exec_cmd: vm set_exec_area Enrutador-1 64 
+Jan 17 12:31:27.163 HYPERVISOR: exec_cmd: vm get_status Enrutador-1 
+Jan 17 12:31:27.163 HYPERVISOR: exec_cmd: vm set_idle_pc Enrutador-1 0x608927c0 
+Jan 17 12:31:27.165 HYPERVISOR: exec_cmd: vm set_ios Enrutador-1 C:/Users/kit_5/GNS3/images/IOS/c7200-a3jk9s-mz.124-25g.image 
+Jan 17 12:31:27.166 HYPERVISOR: exec_cmd: c7200 set_mac_addr Enrutador-1 ca01.5ad4.0000 
+Jan 17 12:31:27.166 HYPERVISOR: exec_cmd: vm set_nvram Enrutador-1 512 
+Jan 17 12:31:27.167 HYPERVISOR: exec_cmd: vm set_ram Enrutador-1 512 
+Jan 17 12:31:27.168 HYPERVISOR: exec_cmd: vm get_status Enrutador-1 
+Jan 17 12:31:27.168 HYPERVISOR: exec_cmd: vm slot_add_binding Enrutador-1 1 0 PA-2FE-TX 
+Jan 17 12:31:27.169 HYPERVISOR: exec_cmd: vm get_status Enrutador-1 
+Jan 17 12:31:27.169 HYPERVISOR: exec_cmd: vm slot_add_binding Enrutador-1 2 0 PA-2FE-TX 
+Jan 17 12:31:35.307 HYPERVISOR: exec_cmd: nio create_udp udp-0d5dadc4-0722-4b7e-b774-1367e082f08d 10002 127.0.0.1 10003 
+Jan 17 12:31:35.587 HYPERVISOR: exec_cmd: vm slot_add_nio_binding Enrutador-1 0 0 udp-0d5dadc4-0722-4b7e-b774-1367e082f08d 
+Jan 17 12:31:35.587 HYPERVISOR: exec_cmd: vm get_status Enrutador-1 
+Jan 17 12:31:36.171 HYPERVISOR: exec_cmd: nio create_udp udp-ca207a76-5cee-480c-b682-deaa164542e8 10010 127.0.0.1 10011 
+Jan 17 12:31:36.180 HYPERVISOR: exec_cmd: vm slot_add_nio_binding Enrutador-1 2 0 udp-ca207a76-5cee-480c-b682-deaa164542e8 
+Jan 17 12:31:36.181 HYPERVISOR: exec_cmd: vm get_status Enrutador-1 
+Jan 17 12:31:40.452 HYPERVISOR: exec_cmd: nio create_udp udp-8312a697-ee32-456c-a9d2-e0a70fff88cb 10088 127.0.0.1 10089 
+Jan 17 12:31:40.457 HYPERVISOR: exec_cmd: vm slot_add_nio_binding Enrutador-1 1 0 udp-8312a697-ee32-456c-a9d2-e0a70fff88cb 
+Jan 17 12:31:40.458 HYPERVISOR: exec_cmd: vm get_status Enrutador-1 
+Jan 17 13:00:13.340 HYPERVISOR: exec_cmd: vm get_status Enrutador-1 
+Jan 17 13:00:13.351 HYPERVISOR: exec_cmd: vm extract_config Enrutador-1 
+Jan 17 13:00:13.838 HYPERVISOR: exec_cmd: vm get_status Enrutador-1 
+Jan 17 13:00:13.850 HYPERVISOR: exec_cmd: vm extract_config Enrutador-1 
+Jan 17 13:00:13.869 HYPERVISOR: exec_cmd: vm delete Enrutador-1 
+Jan 17 13:00:13.870 VM: VM Enrutador-1 destroyed.
+Jan 17 13:00:13.880 HYPERVISOR: exec_cmd: hypervisor stop 
+Jan 17 13:00:14.223 HYPERVISOR: Stopped.
+Jan 17 13:00:14.224 GENERAL: reset done.
