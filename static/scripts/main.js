@@ -12,7 +12,7 @@ async function cargarTopologia() { // Consultamos la API para obtener la topolog
             },
             body: JSON.stringify({
                 'ip': '10.0.1.254',
-                'name': 'Enrutador-4',
+                'name': 'Enrutador-6',
                 'user': 'root',
                 'password': 'root'
             })
