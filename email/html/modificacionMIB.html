@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <style>
+            {estilos}
+        </style>
+    </head>
+    <header>
+        <img id="logo1" src='cid:logoIPN'/>
+        <img id="logo2" src="cid:logoEscom"/>
+        <h1>Instituto Polit&eacute;cnico Nacional</h1>
+        <h2>Escuela Superior de C&oacute;mputo</h2>
+        <h2> Administraci&oacute;n de servicios en Red</h2>
+    </header>
+    <body>
+        <p>
+            Se ha detectado
+            <span id="msg">una modificacion en la MIB</span> 
+            en el router
+            <span id="nombreR">{nombreR}. </span> 
+            Los datos son los siguientes:
+        </p>
+        <div>
+            <img id="imgMIB" src='cid:imagen'/>
+            <form id="formMuestra">
+                <label>Nombre del host: </label>
+                <br>
+                <input type="text" name="mib" value={nombreMIB} disabled/>
+                <br><br>
+                <label>Descripci&oacute;n: </label>
+                <br>
+                <textarea type="text" name="mib" disabled> {desMIB} </textarea>
+                <br><br>
+                <label>Contacto: </label>
+                <br>
+                <input type="text" name="mib" value={contMIB} disabled/>
+                <br><br>
+                <label>Localizaci&oacute;n: </label>
+                <br>
+                <input type="text" name="mib" value={ubiMIB} disabled/>
+            </form>
+            
+        </div>
+    </body>
+    <footer>
+        <p>
+            <span id="subrayado">Favor de NO contestar a este correo, es de uso informativo</span>
+        </p>
+        <p id="firma">~ R1>Enable </p>
+    </footer>
+</html>

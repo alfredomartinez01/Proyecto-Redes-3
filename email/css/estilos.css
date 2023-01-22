@@ -1,0 +1,49 @@
+#logo1{
+    float: left;
+    width: 83px;
+    height: 108px;
+}
+#logo2{
+    float: right;
+    display: table-cell;
+    vertical-align: bottom;
+    display: flex;
+}
+header{
+    text-align: center;
+}
+#imgR{
+    display:block;
+    margin: auto;
+}
+#subrayado{
+    text-align: justify;
+    font-style: italic;
+    background: yellowgreen;
+    font-weight: bold;
+}
+
+#msg, #nombreR, #nombreE{
+    font-weight: bold;
+    font-style: italic;
+}
+
+#firma{
+    font-style: italic;
+}
+
+#formMuestra{
+    float: left;
+}
+#imgMIB{
+    float: right;
+    display: table-cell;
+    vertical-align: bottom;
+    display: flex;
+    width: 20%;
+    height: 20%;
+}
+footer{
+    position: absolute;
+    bottom: 0;
+}

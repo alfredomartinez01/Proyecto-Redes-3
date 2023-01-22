@@ -1,0 +1,32 @@
+configure t
+line vty 0 4
+username root privilege 15 password root
+exit
+exit
+write
+
+username root privilege 15 password 0 root
+ip tcp synwait-time 5
+ip ssh time-out 30
+ip ssh rsa keypair-name sshkey
+ip ssh version 2
+line con 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line aux 0
+ exec-timeout 0 0
+ privilege level 15
+ logging synchronous
+ stopbits 1
+line vty 0 4
+ password root
+ login local
+ transport input telnet ssh
+line vty 5 15
+ password root
+ login local
+ transport input telnet ssh
+
+

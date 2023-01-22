@@ -1,0 +1,45 @@
+conf t
+ip domain-name adminredes.escom.ipn.mx
+ip ssh rsa keypair-name sshkey
+crypto key generate rsa usage-keys label sshkey modulus 1024
+ip ssh version 2
+ip ssh time-out 30
+ip ssh authentication-retries 3
+username root privilege 15 password root
+line vty 0 4
+transport input ssh
+login local
+exit
+exit
+
+conf t
+ip domain-name adminredes.escom.ipn.mx
+ip ssh rsa keypair-name sshkey
+crypto key generate rsa usage-keys label sshkey modulus 1024
+ip ssh version 2
+ip ssh time-out 30
+ip ssh authentication-retries 3
+username admin privilege 15 password admin
+line vty 0 4
+transport input ssh
+login local
+exit
+exit
+
+
+conf t
+enable secret 1234
+service password-encryption
+ip domain-name adminredes.escom.ipn.mx
+ip ssh rsa keypair-name sshkey
+crypto key generate rsa usage-keys label sshkey modulus 1024
+ip ssh v 2
+ip ssh time-out 30
+ip ssh authentication-retries 3
+line vty 0 15
+password cisco
+login local
+transport input ssh telnet
+exit
+username cisco privilege 15 password cisco
+end
