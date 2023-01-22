@@ -1,7 +1,0 @@
-INFO:werkzeug:127.0.0.1 - - [08/Dec/2022 16:40:32] "[36mGET / HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [08/Dec/2022 16:40:32] "GET /static/scripts.js HTTP/1.1" 200 -
-INFO:werkzeug:127.0.0.1 - - [08/Dec/2022 16:40:32] "[36mGET /static/styles.css HTTP/1.1[0m" 304 -
-INFO:werkzeug:127.0.0.1 - - [08/Dec/2022 16:40:32] "[36mGET /static/topologia.jpg HTTP/1.1[0m" 304 -
-DEBUG:root:Obteniendo topologia
-INFO:werkzeug:127.0.0.1 - - [08/Dec/2022 16:40:33] "[35m[1mPOST /topologia HTTP/1.1[0m" 500 -
-INFO:werkzeug: * Detected change in 'C:\\Users\\kit_5\\Downloads\\Administración de Servicios de Red\\Proyecto\\app.py', reloading
