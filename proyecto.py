@@ -16,15 +16,15 @@ import matplotlib.pyplot as matplot
 max_buffer = 65535
 
 #Variables
-global paquetes = []
-global trampas = []
-global fechas = []
-global fecha_subida = []
-global fecha_bajada = []
-global iteraciones=0
-global octeto_anterior = 0
-global paquete_anterior = 0
-global contenedor = {}
+paquetes = []
+trampas = []
+fechas = []
+fecha_subida = []
+fecha_bajada = []
+iteraciones=0
+octeto_anterior = 0
+paquete_anterior = 0
+contenedor = {}
 
 #OID
 in_paquetes = '1.3.6.1.2.1.2.2.1.11.1'
@@ -58,21 +58,33 @@ def snmp_query(host, community, oid):
                 return(str(val))
             
 def cbFun(snmpEngine, stateReference, contextEngineId, contextName, varBinds, cbCtx):
-        valor = str((varBinds.pop())[-1])
-        with open('status.txt', 'w') as f:
-            f.write(valor+"\n")
-            f.close()
-        print(valor)
-        if valor == "administratively down":
-            fechas.append(str(datetime.datetime.now()))
-            fecha_bajada.append(str(datetime.datetime.now()))
-            paquetes.append(paquetes[len(paquetes)-1])
-        elif valor=="Keepalive OK" or valor=="up":
-            fechas.append(str(datetime.datetime.now()))
-            fecha_subida.append(str(datetime.datetime.now()))
-            paquetes.append(paquetes[len(paquetes)-1])
+    global paquetes
+    global fechas
+    global fecha_subida
+    global fecha_bajada
+
+    valor = str((varBinds.pop())[-1])
+    with open('status.txt', 'w') as f:
+        f.write(valor+"\n")
+        f.close()
+    print(valor)
+    if valor == "administratively down":
+        fechas.append(str(datetime.datetime.now()))
+        fecha_bajada.append(str(datetime.datetime.now()))
+        paquetes.append(paquetes[len(paquetes)-1])
+    elif valor=="Keepalive OK" or valor=="up":
+        fechas.append(str(datetime.datetime.now()))
+        fecha_subida.append(str(datetime.datetime.now()))
+        paquetes.append(paquetes[len(paquetes)-1])
 
 def monitor_paq():
+    global paquetes
+    global fechas
+    global iteraciones
+    global octeto_anterior
+    global paquete_anterior
+    global contenedor
+
     resultado = {}
     resultado["Tiempo"] = str(datetime.datetime.now())
     fechas.append(str(datetime.datetime.now()))
@@ -82,14 +94,14 @@ def monitor_paq():
 
     if iteraciones == 0:
         resultado['dif_oct'] = 0
-		octeto_anterior = int(snmp_query('10.0.1.254', comunidad, in_octetos))
-		resultado['dif_pack'] = 0
-		paquete_anterior= int(snmp_query('10.0.1.254', comunidad, in_paquetes))
+        octeto_anterior = int(snmp_query('10.0.1.254', comunidad, in_octetos))
+        resultado['dif_pack'] = 0
+        paquete_anterior= int(snmp_query('10.0.1.254', comunidad, in_paquetes))
     else:
         resultado['dif_oct'] = int(snmp_query('10.0.1.254', comunidad, in_octetos))-oct_anterior
-		octeto_anterior = int(snmp_query('10.0.1.254', comunidad, in_octetos))
-		resultado['dif_pack'] = int(snmp_query('10.0.1.254', comunidad, in_paquetes))-paquete_anterior
-		paquete_anterior= int(snmp_query('10.0.1.254', comunidad, in_paquetes))
+        octeto_anterior = int(snmp_query('10.0.1.254', comunidad, in_octetos))
+        resultado['dif_pack'] = int(snmp_query('10.0.1.254', comunidad, in_paquetes))-paquete_anterior
+        paquete_anterior= int(snmp_query('10.0.1.254', comunidad, in_paquetes))
     
     paquetes.append(resultado['dif_pack'])
     contenedor["Iteracion_"+str(iteraciones)] = resultado
@@ -97,10 +109,9 @@ def monitor_paq():
     print("Iteracion:"+ str(iteraciones))
 
     if iteraciones <= 10:
-		time.sleep(10)
-		monitor_paq()
-
-	return
+        time.sleep(10)
+        monitor_paq()
+    return
 
 def monitor_trampa(host, comunidad, vista):
     snmpEngine = engine.SnmpEngine()
@@ -125,9 +136,15 @@ def monitor_trampa(host, comunidad, vista):
 
 app = Flask(__name__)
 
-@app.route('/monitoreo-red', methods= ['POST'])
+@app.get('/monitoreo-red')
 def monitoreo_snmp():
-    body = request.get_json()
+    global paquetes
+    global trampas
+    global fechas
+    global fecha_subida
+    global fecha_bajada
+    global contenedor
+    
     retorno={}
     tiempo_inicial = datetime.datetime.now()
 
@@ -157,12 +174,13 @@ def monitoreo_snmp():
         matplot.axvline(x = x, color = 'red', label = 'Se baja interfaz')
     
     matplot.gcf().autofmt_xdate()
-	matplot.ylabel('Paquetes recibidos')
+    matplot.ylabel('Paquetes recibidos')
 
     imagen = io.BytesIO()
     matplot.savefig(imagen, format='png')
     imagen.seek(0)
     grafica = base64.b64encode(imagen.getvalue()).decode()
-	matplot.clf()
+    matplot.clf()
+    matplot.savefig("static/grafica.jpg")
 
-    return '<img src = "data:image/png;base64,{}">'.format(grafica)
+    return 200 

@@ -5,6 +5,7 @@ import logging
 import time
 from pysnmp.hlapi import *
 import json
+from envioCorreos import *
 
 max_buffer = 65535
 
@@ -285,6 +286,14 @@ class Router:
         # self.snmpV3_query("10.0.1.254", '1.3.6.1.2.1.1.1.0', mode="escritura", valor=descripcion)
         self.snmpV3_query(self.ip, '1.3.6.1.2.1.1.4.0', mode="escritura", valor=contacto)
         self.snmpV3_query(self.ip, '1.3.6.1.2.1.1.6.0', mode="escritura", valor=localizacion)
+
+        info_mib = {}
+        info_mib["nombre"] = nombre
+        info_mib["descripcion"] = descripcion
+        info_mib["contacto"] = contacto
+        info_mib["localizacion"] = localizacion
+
+        enviarCorreoModificacionMIB(self.name, info_mib)
 
     def monitorear(self,intefaz, periodo):
         pass

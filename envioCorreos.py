@@ -2,6 +2,7 @@ import smtplib,Encriptado
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+import logging
 
 #Encriptación y obtencion de contraseña del correo
 Encriptado.generar()
@@ -62,8 +63,8 @@ def enviarCorreoModificacionMIB(nombreRouter, objNuevaInfoMib):
     estilos = open('css/estilos.css','r').read()
 
     #Cuerpo del correo
-    cuerpo = open('html/modificacionMIB.html','r').read().format(estilos=estilos, nombreR=nombreRouter, nombreMIB=objNuevaInfoMib['nombre'], desMIB=objNuevaInfoMib['descripcion'], ubiMIB=objNuevaInfoMib['ubicacion'], contMIB=objNuevaInfoMib['contacto'])
-    #print(cuerpo)
+    cuerpo = open('html/modificacionMIB.html','r').read().format(estilos=estilos, nombreR=nombreRouter, nombreMIB=objNuevaInfoMib['nombre'], desMIB=objNuevaInfoMib['descripcion'], ubiMIB=objNuevaInfoMib['localizacion'], contMIB=objNuevaInfoMib['contacto'])
+    #logging.debug(cuerpo)
     enviarCorreo(cuerpo, 'mib.png')
 
 #Funcion para enviar la notificación por correo cuando se detecte una caida o un arranque de interfaz
@@ -109,6 +110,7 @@ def enviarCorreo(cuerpoC, nombreI):
 
     email.attach(MIMEText(cuerpoC, "html")) 
 
+    logging.debug("enviando...")
     smtp = smtplib.SMTP_SSL("smtp.gmail.com")
     smtp.login(remitente, password[1])
     smtp.sendmail(remitente, destinatario, email.as_string())
