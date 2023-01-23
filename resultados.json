@@ -1,0 +1,26 @@
+{
+    "2023-01-23 14:59:23.727426": {
+        "entrada": 3828,
+        "salida": 3582,
+        "danados": 0,
+        "perdidos": 0
+    },
+    "2023-01-23 14:59:35.718311": {
+        "entrada": 0,
+        "salida": 1,
+        "danados": 0,
+        "perdidos": 0
+    },
+    "2023-01-23 14:59:48.495947": {
+        "entrada": 0,
+        "salida": 2,
+        "danados": 0,
+        "perdidos": 0
+    },
+    "2023-01-23 14:59:59.725759": {
+        "entrada": 0,
+        "salida": 3,
+        "danados": 0,
+        "perdidos": 0
+    }
+}

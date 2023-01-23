@@ -322,9 +322,28 @@ class Router:
                 resultado["danados"] = int(self.snmpV3_query(self.ip, paq_danados)) - resultados[list(resultados.keys())[0]]["danados"]
                 resultado["perdidos"] = int(self.snmpV3_query(self.ip, paq_perdidos)) - resultados[list(resultados.keys())[0]]["perdidos"]
             
-            resultados[datetime.datetime.utcnow().isoformat()] = resultado
+            resultados[str(datetime.datetime.now())] = resultado
             time.sleep(int(periodo))
-            logging.debug(resultado)
+
+            """ Guardamos el estado del protocolo """
+            # with open("resultados.json", "w") as file:
+                # json.dump(resultados, file, indent=4)
+
+            graficar(resultados)
+
+    def graficar(resultados):
+        with open("resultados.json", "r") as file:
+            resultados = json.load(file)
+
+        fechas = []
+        
+        entrada = []
+        salida = []
+        danados = []
+        perdidos = []
+
+        matplot.plot(fechas, entrada)
+        matplot.savefig("static/paq_entrada.jpg")
 
     def monitorear(self,interfaz, periodo, hilo_monitoreo):
         hilo_monitoreo = threading.Thread(target=self.monitor_paq, args=(interfaz, periodo))
