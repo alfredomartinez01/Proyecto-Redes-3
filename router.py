@@ -295,7 +295,7 @@ class Router:
 
         enviarCorreoModificacionMIB(self.name, info_mib)
 
-    def monitorear(self,intefaz, periodo):
+    def monitorear(self,intefaz, periodo, hilo_monitoreo):
         pass
     
     def modificarProtocolo(self, nombreProtocolo, mode):

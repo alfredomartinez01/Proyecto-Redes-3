@@ -7,30 +7,46 @@ logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 
 app = Flask(__name__)
 red = None
+hilo_monitoreo = None
 
 @app.get('/')
-def index():    
+def index():
     """ Obtiene la pagina principal """
+    if (hilo_monitoreo != None):
+        hilo_monitoreo.do_run = False
+        
     return send_file('static/index.html')
     
 @app.get('/usuarios')
-def usuarios():    
+def usuarios():
     """ Obtiene la pagina de gestión de usuarios """
+    if (hilo_monitoreo != None):
+        hilo_monitoreo.do_run = False
+        
     return send_file('static/usuarios.html')
 
 @app.get('/monitorear')
 def monitorear():
     """ Obtiene la pagina de monitoreo """
+    if (hilo_monitoreo != None):
+        hilo_monitoreo.do_run = False
+        
     return send_file('static/monitorear.html')
 
 @app.get('/protocolos')
 def protocolos():
     """ Obtiene la pagina de protocolos """
+    if (hilo_monitoreo != None):
+        hilo_monitoreo.do_run = False
+        
     return send_file('static/protocolos.html')
 
 @app.get('/mib')
 def mib():
     """ Obtiene la pagina de modificar los datos de la mib """
+    if (hilo_monitoreo != None):
+        hilo_monitoreo.do_run = False
+        
     return send_file('static/modificar-mib.html')
     
 @app.get('/mib/<router>')
@@ -112,15 +128,39 @@ def monitorearInterfaz():
     interfaz = credenciales['interfaz']
     periodo = credenciales['periodo']
     
-    # Levantando protocolo SNMP
-    red.configurarSNMP(router)
-    
+    if (hilo_monitoreo != None):
+        hilo_monitoreo.do_run = False
+        
     try:
         # Realizando monitoreo
-        red.monitorear(router, intefaz, periodo)
+        red.monitorear(router, intefaz, periodo, hilo_monitoreo)
         return jsonify({"status": "ok"})
     except:
         return jsonify({"status": "Error monitoreando"}), 500        
+
+@app.get('/paquetes-salida')
+def obtenerPaquetesSalida():
+    """ Enviando imagen de los paquetes de salida """
+
+    return send_file('static/paq_salida.jpg')
+
+@app.get('/paquetes-entrada')
+def obtenerPaquetesEntrada():
+    """ Enviando imagen de los paquetes de entrada """
+
+    return send_file('static/paq_entrada.jpg')
+
+@app.get('/paquetes-danados')
+def obtenerPaquetesDanados():
+    """ Enviando imagen de los paquetes dañados """
+
+    return send_file('static/paq_danados.jpg')
+
+@app.get('/paquetes-perdidos')
+def obtenerPaquetesPerdidos():
+    """ Enviando imagen de los paquetes perdidos """
+
+    return send_file('static/paq_perdidos.jpg')
 
 @app.post('/usuarios/<router>')
 def crearUsuario(router):

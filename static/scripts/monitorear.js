@@ -52,10 +52,10 @@ boton_aceptar.addEventListener('click', async () => {
         periodo: document.querySelector("#select-periodo").value
     };
     console.log(parametros)
+
     try {
-        await levantarSNMP(parametros.router); // Levantamos el servicio SNMP en el router seleccionado
-        const graficas = await monitorear(parametros); // Obtenemos las gráficas
-        
+        await monitorear(parametros); // Obtenemos las gráficas
+
         /* Ocultamos inputs */
         containerRouter.style.display = "none";
         containerInterfaz.style.display = "none";
@@ -63,6 +63,8 @@ boton_aceptar.addEventListener('click', async () => {
         boton_aceptar.style.display = "none";
 
         /* Mostramos gráficas */
+        obtenerGraficas();
+
     } catch (error) {
         alert(error);
     }
@@ -87,16 +89,6 @@ async function obtenerInfoTopologia() { // Consultamos la API para obtener la in
     topologia = routers;
 }
 
-async function levantarSNMP(router) { // Consultamos la API para levantar el servicio SNMP en el router seleccionado
-    if (router == "") {
-        throw new Error("Debes seleccionar un router");
-    }
-
-    const response = await fetch(`/snmp/${router}`, {
-        method: 'POST'
-    });
-}
-
 async function monitorear(parametros) { // Consultamos la API para obtener un monitoreo de la interfaz seleccionada
     if (parametros.router == "" || parametros.interfaz == "" || parametros.periodo == "") {
         throw new Error("Debes seleccionar todos los parámetros");
@@ -110,4 +102,26 @@ async function monitorear(parametros) { // Consultamos la API para obtener un mo
         body: JSON.stringify(parametros)
     });
 
+}
+
+async function obtenerGraficas() { // Consultamos la API para obtener las gráficas de la interfaz seleccionada
+    const responses = await Promise.all([fetch('/paquetes-salida'), fetch('/paquetes-entrada'), fetch('/paquetes-perdidos'), fetch('/paquetes-danados')]);
+
+    let blob = null;
+
+    // Paquetes de salida
+    blob = await responses[0].blob();
+    document.querySelector("#paq-salida").src = window.URL.createObjectURL(blob);
+
+    // Paquetes de entrada
+    blob = await responses[1].blob();
+    document.querySelector("#paq-entrada").src = window.URL.createObjectURL(blob);
+
+    // Paquetes perdidos
+    blob = await responses[2].blob();
+    document.querySelector("#paq-perdidos").src = window.URL.createObjectURL(blob);
+
+    // Paquetes dañados
+    blob = await responses[3].blob();
+    document.querySelector("#paq-danados").src = window.URL.createObjectURL(blob);
 }
