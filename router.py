@@ -311,10 +311,16 @@ class Router:
             
         while True:
             resultado = {}
-            resultado["entrada"] = self.snmpV3_query(self.ip, in_uPackets)
-            resultado["salida"] = self.snmpV3_query(self.ip, out_uPackets)
-            resultado["danados"] = self.snmpV3_query(self.ip, paq_danados)
-            resultado["perdidos"] = self.snmpV3_query(self.ip, paq_perdidos)
+            if len(resultados) == 0:
+                resultado["entrada"] = int(self.snmpV3_query(self.ip, in_uPackets))
+                resultado["salida"] = int(self.snmpV3_query(self.ip, out_uPackets))
+                resultado["danados"] = int(self.snmpV3_query(self.ip, paq_danados))
+                resultado["perdidos"] = int(self.snmpV3_query(self.ip, paq_perdidos))
+            else:
+                resultado["entrada"] = int(self.snmpV3_query(self.ip, in_uPackets)) - resultados[list(resultados.keys())[0]]["entrada"]
+                resultado["salida"] = int(self.snmpV3_query(self.ip, out_uPackets)) - resultados[list(resultados.keys())[0]]["salida"]
+                resultado["danados"] = int(self.snmpV3_query(self.ip, paq_danados)) - resultados[list(resultados.keys())[0]]["danados"]
+                resultado["perdidos"] = int(self.snmpV3_query(self.ip, paq_perdidos)) - resultados[list(resultados.keys())[0]]["perdidos"]
             
             resultados[datetime.datetime.utcnow().isoformat()] = resultado
             time.sleep(int(periodo))
