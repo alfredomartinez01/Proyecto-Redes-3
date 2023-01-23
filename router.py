@@ -298,14 +298,14 @@ class Router:
 
         enviarCorreoModificacionMIB(self.name, info_mib)
 
-    def monitor_paq(self, intefaz, periodo):
+    def monitor_paq(self, interfaz, periodo):
         """ Monitoreo """
         # OID's
-        in_uPackets = '1.3.6.1.2.1.2.2.1.11' + "." + str(intefaz)
-        out_uPackets = '1.3.6.1.2.1.2.2.1.17' + "." + str(intefaz)
-        error_uPackets = '1.3.6.1.2.1.2.2.1.20' + "." + str(intefaz)
-        paq_danados='1.3.6.1.2.1.2.2.1.14' + "." + str(intefaz)
-        paq_perdidos = '1.3.6.1.2.1.2.2.1.13' + "." + str(intefaz)
+        in_uPackets = '1.3.6.1.2.1.2.2.1.11' + "." + str(interfaz)
+        out_uPackets = '1.3.6.1.2.1.2.2.1.17' + "." + str(interfaz)
+        error_uPackets = '1.3.6.1.2.1.2.2.1.20' + "." + str(interfaz)
+        paq_danados='1.3.6.1.2.1.2.2.1.14' + "." + str(interfaz)
+        paq_perdidos = '1.3.6.1.2.1.2.2.1.13' + "." + str(interfaz)
         
         resultados = {}
             
@@ -317,11 +317,13 @@ class Router:
             resultado["perdidos"] = self.snmpV3_query(self.ip, paq_perdidos)
             
             resultados[datetime.datetime.utcnow().isoformat()] = resultado
-            time.sleep(periodo)
+            time.sleep(int(periodo))
+            logging.debug(resultado)
 
-    def monitorear(self,intefaz, periodo, hilo_monitoreo):
-        hilo_monitoreo = threading.Thread(target=self.monitor_paq, args=(intefaz, periodo))
+    def monitorear(self,interfaz, periodo, hilo_monitoreo):
+        hilo_monitoreo = threading.Thread(target=self.monitor_paq, args=(interfaz, periodo))
         
+        hilo_monitoreo.start()
     
     def modificarProtocolo(self, nombreProtocolo, mode):
         with open("protocolos.json", "r") as file:

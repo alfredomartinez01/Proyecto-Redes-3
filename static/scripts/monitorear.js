@@ -18,7 +18,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     `;
 
     containerRouter.style.display = "block";
-    containerTopologia.style.display = "none";
 });
 // Select router
 document.querySelector("#select-router").addEventListener('change', (e) => {
@@ -48,7 +47,7 @@ boton_aceptar.addEventListener('click', async () => {
 
     const parametros = {
         router: topologia[ind_router].name,
-        interfaz: topologia[ind_router].interfaces[ind_interfaz],
+        interfaz: ind_interfaz,
         periodo: document.querySelector("#select-periodo").value
     };
     console.log(parametros)
@@ -63,7 +62,7 @@ boton_aceptar.addEventListener('click', async () => {
         boton_aceptar.style.display = "none";
 
         /* Mostramos gráficas */
-        obtenerGraficas();
+        // obtenerGraficas();
 
     } catch (error) {
         alert(error);
@@ -102,6 +101,7 @@ async function monitorear(parametros) { // Consultamos la API para obtener un mo
         body: JSON.stringify(parametros)
     });
 
+    console.log(response)
 }
 
 async function obtenerGraficas() { // Consultamos la API para obtener las gráficas de la interfaz seleccionada

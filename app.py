@@ -136,10 +136,12 @@ def monitorearInterfaz():
         
     try:
         # Realizando monitoreo
-        red.monitorear(router, intefaz, periodo, hilo_monitoreo)
+        red.monitorear(router, interfaz, periodo, hilo_monitoreo)
         return jsonify({"status": "ok"})
-    except:
-        return jsonify({"status": "Error monitoreando"}), 500        
+
+    except Exception as e:
+        logging.error(str(e))
+        return jsonify({"status": "Error monitoreando " + str(e)}), 500      
 
 @app.get('/paquetes-salida')
 def obtenerPaquetesSalida():
