@@ -6,6 +6,9 @@ import time
 from pysnmp.hlapi import *
 import json
 from envioCorreos import *
+import threading
+import time
+import datetime
 
 max_buffer = 65535
 
@@ -295,8 +298,30 @@ class Router:
 
         enviarCorreoModificacionMIB(self.name, info_mib)
 
+    def monitor_paq(self, intefaz, periodo):
+        """ Monitoreo """
+        # OID's
+        in_uPackets = '1.3.6.1.2.1.2.2.1.11' + "." + str(intefaz)
+        out_uPackets = '1.3.6.1.2.1.2.2.1.17' + "." + str(intefaz)
+        error_uPackets = '1.3.6.1.2.1.2.2.1.20' + "." + str(intefaz)
+        paq_danados='1.3.6.1.2.1.2.2.1.14' + "." + str(intefaz)
+        paq_perdidos = '1.3.6.1.2.1.2.2.1.13' + "." + str(intefaz)
+        
+        resultados = {}
+            
+        while True:
+            resultado = {}
+            resultado["entrada"] = self.snmpV3_query(self.ip, in_uPackets)
+            resultado["salida"] = self.snmpV3_query(self.ip, out_uPackets)
+            resultado["danados"] = self.snmpV3_query(self.ip, paq_danados)
+            resultado["perdidos"] = self.snmpV3_query(self.ip, paq_perdidos)
+            
+            resultados[datetime.datetime.utcnow().isoformat()] = resultado
+            time.sleep(periodo)
+
     def monitorear(self,intefaz, periodo, hilo_monitoreo):
-        pass
+        hilo_monitoreo = threading.Thread(target=self.monitor_paq, args=(intefaz, periodo))
+        
     
     def modificarProtocolo(self, nombreProtocolo, mode):
         with open("protocolos.json", "r") as file:

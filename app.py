@@ -128,6 +128,9 @@ def monitorearInterfaz():
     interfaz = credenciales['interfaz']
     periodo = credenciales['periodo']
     
+    # Levantando protocolo SNMPv3 en el router
+    red.configurarSNMPV3(router)
+    
     if (hilo_monitoreo != None):
         hilo_monitoreo.do_run = False
         
