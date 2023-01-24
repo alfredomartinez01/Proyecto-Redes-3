@@ -302,7 +302,7 @@ class Router:
 
         enviarCorreoModificacionMIB(self.name, info_mib)
 
-    def monitor_paq(self, interfaz, periodo):
+    def monitor_paq(self, interfaz, interfaz_nombre, periodo):
         """ Monitoreo """
         # OID's
         in_uPackets = '1.3.6.1.2.1.2.2.1.11' + "." + str(interfaz)
@@ -342,14 +342,14 @@ class Router:
             # Enviando correos por perdida o daño
             if resultado["salida"] > 0:
                 if resultado["perdidos"]/resultado["salida"] > 0.5:
-                    enviarCorreoPerdidos(self.name, str(interfaz))
+                    enviarCorreoPerdidos(self.name, interfaz_nombre)
 
                 if resultado["danados"]/resultado["salida"] > 0.5:
-                    enviarCorreoDanados(self.name, str(interfaz))
+                    enviarCorreoDanados(self.name, interfaz_nombre)
 
             time.sleep(int(periodo))
 
-    def trampa(self, host, comunidad, vista):
+    def trampa(self, host, interfaz_nombre, comunidad, vista):
         snmpEngine = engine.SnmpEngine()
 
         config.addTransport(
@@ -362,11 +362,13 @@ class Router:
         def cbFun(snmpEngine, stateReference, contextEngineId, contextName, varBinds, cbCtx):
             valor = str((varBinds.pop())[-1])
             
-            for name, val in varBinds:   
-                logging.info('%s = %s' % (name.prettyPrint(), val.prettyPrint()))
-                print('%s = %s' % (name.prettyPrint(), val.prettyPrint()))
-                
-            logging.debug(valor)
+            if valor != "3":
+                for name, val in varBinds:
+                    if interfaz_nombre == val.prettyPrint():
+                        logging.info(val.prettyPrint()+ " tuvo " + valor)
+                        break
+            else:
+                logging.debug("Terminal configurada desde dispositivo")
 
         ntfrcv.NotificationReceiver(snmpEngine, cbFun)
         snmpEngine.transportDispatcher.jobStarted(1)  
@@ -391,12 +393,14 @@ class Router:
         matplot.plot(fechas, entrada)
         matplot.savefig("static/paq_entrada.jpg")
 
-    def monitorear(self,interfaz, periodo):
-        hilo_monitoreo = threading.Thread(target=self.monitor_paq, args=(interfaz, periodo))
+    def monitorear(self, interfaz, periodo):
+        interfaz_nombre = self.snmpV3_query(self.ip, '1.3.6.1.2.1.2.2.1.2' + "." + str(interfaz))
+
+        hilo_monitoreo = threading.Thread(target=self.monitor_paq, args=(interfaz, interfaz_nombre, periodo))
         
         hilo_monitoreo.start()
         
-        self.trampa('10.0.1.1', 'comunidad', 'vis_comunidad_read')
+        self.trampa('10.0.1.1', interfaz_nombre, 'comunidad', 'vis_comunidad_read')
         logging.debug('Trampa iniciada')
         
         return hilo_monitoreo
