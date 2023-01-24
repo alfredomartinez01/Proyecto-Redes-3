@@ -20,6 +20,7 @@ class Red():
 
         # Generando gráfico
         plt.clf()  # Limpiando imagen
+        plt.figure(figsize=(10, 7))
         G = nx.Graph()
         for router in self.routers:  # Agregando routers
             G.add_node(router, name=router)

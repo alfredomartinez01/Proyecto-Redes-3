@@ -66,7 +66,7 @@ boton_aceptar.addEventListener('click', async () => {
             console.log("Consultando...")
             await obtenerGraficas()
             document.querySelector("#imagenes").style.display = "flex";
-        }, 1000)
+        }, 3000)
 
     } catch (error) {
         alert(error);
@@ -109,23 +109,11 @@ async function monitorear(parametros) { // Consultamos la API para obtener un mo
 }
 
 async function obtenerGraficas() { // Consultamos la API para obtener las gráficas de la interfaz seleccionada
-    const responses = await Promise.all([fetch('/paquetes-salida'), fetch('/paquetes-entrada'), fetch('/paquetes-perdidos'), fetch('/paquetes-danados')]);
+    const response = await fetch('/paquetes')
 
     let blob = null;
 
-    // Paquetes de salida
-    blob = await responses[0].blob();
-    document.querySelector("#paq-salida").src = window.URL.createObjectURL(blob);
-
-    // Paquetes de entrada
-    blob = await responses[1].blob();
-    document.querySelector("#paq-entrada").src = window.URL.createObjectURL(blob);
-
-    // Paquetes perdidos
-    blob = await responses[2].blob();
-    document.querySelector("#paq-perdidos").src = window.URL.createObjectURL(blob);
-
-    // Paquetes dañados
-    blob = await responses[3].blob();
-    document.querySelector("#paq-danados").src = window.URL.createObjectURL(blob);
+    // Paquetes
+    blob = await response.blob();
+    document.querySelector("#paquetes").src = window.URL.createObjectURL(blob);
 }

@@ -168,29 +168,11 @@ def monitorearInterfaz():
         logging.error(str(e))
         return jsonify({"status": "Error monitoreando " + str(e)}), 500      
 
-@app.get('/paquetes-salida')
-def obtenerPaquetesSalida():
+@app.get('/paquetes')
+def obtenerPaquetes():
     """ Enviando imagen de los paquetes de salida """
 
-    return send_file('static/paq_salida.jpg')
-
-@app.get('/paquetes-entrada')
-def obtenerPaquetesEntrada():
-    """ Enviando imagen de los paquetes de entrada """
-
-    return send_file('static/paq_entrada.jpg')
-
-@app.get('/paquetes-danados')
-def obtenerPaquetesDanados():
-    """ Enviando imagen de los paquetes dañados """
-
-    return send_file('static/paq_danados.jpg')
-
-@app.get('/paquetes-perdidos')
-def obtenerPaquetesPerdidos():
-    """ Enviando imagen de los paquetes perdidos """
-
-    return send_file('static/paq_perdidos.jpg')
+    return send_file('static/paquetes.jpg')
 
 @app.post('/usuarios/<router>')
 def crearUsuario(router):

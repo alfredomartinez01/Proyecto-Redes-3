@@ -14,6 +14,8 @@ from pysnmp.entity import engine, config
 from pysnmp.carrier.asyncore.dgram import udp
 from pysnmp.entity.rfc3413 import ntfrcv
 
+import matplotlib.pyplot as plt
+
 max_buffer = 65535
 
 class Router:
@@ -300,7 +302,8 @@ class Router:
         info_mib["contacto"] = contacto
         info_mib["localizacion"] = localizacion
 
-        enviarCorreoModificacionMIB(self.name, info_mib)
+        logging.debug("Modificando MIB con: "+ str(info_mib))
+        # enviarCorreoModificacionMIB(self.name, info_mib)
 
     def monitor_paq(self, interfaz, interfaz_nombre, periodo):
         """ Monitoreo """
@@ -337,14 +340,16 @@ class Router:
                 json.dump(resultados, file, indent=4)
 
             # Graficando resultados
-            # graficar(resultados
+            self.graficar(resultados)
 
             # Enviando correos por perdida o daño
             if resultado["salida"] > 0:
                 if resultado["perdidos"]/resultado["salida"] > 0.5:
+                    logging.debug("Enviando correo por perdida de paquetes")
                     enviarCorreoPerdidos(self.name, interfaz_nombre)
 
                 if resultado["danados"]/resultado["salida"] > 0.5:
+                    loggin.debug("Enviando correo por paquetes dañados")
                     enviarCorreoDanados(self.name, interfaz_nombre)
 
             time.sleep(int(periodo))
@@ -370,10 +375,18 @@ class Router:
             if valor != "3":
                 for name, val in varBinds:
                     if interfaz_nombre == val.prettyPrint():
-                        logging.info(val.prettyPrint()+ " tuvo " + valor)
+                        # Enviando correo
+                        if valor == "administratively down":
+                            logging.debug(interfaz_nombre + " apagada")
+                            # enviarCorreoEstadoInterfaz(self.name, interfaz_nombre, 0)
+                        else:
+                            logging.debug(interfaz_nombre + " encendida")
+                            # enviarCorreoEstadoInterfaz(self.name, interfaz_nombre, 1)
+                        
                         break
             else:
                 logging.debug("Terminal configurada desde dispositivo")
+                # enviarCorreoConsola(self.name)
 
         ntfrcv.NotificationReceiver(snmpEngine, cbFun)
         snmpEngine.transportDispatcher.jobStarted(1)
@@ -386,19 +399,64 @@ class Router:
             snmpEngine.transportDispatcher.closeDispatcher()
             raise
 
-    def graficar(resultados):
-        with open("resultados.json", "r") as file:
-            resultados = json.load(file)
+    def graficar(self, resultados):
+        #with open("resultados.json", "r") as file:
+            #resultados = json.load(file)
 
-        fechas = []
-
+        fechas = list(resultados.keys())
+        
         entrada = []
         salida = []
         danados = []
         perdidos = []
 
-        matplot.plot(fechas, entrada)
-        matplot.savefig("static/paq_entrada.jpg")
+        for key in resultados.keys():  #para cada llave en el objeto principal
+            objetos = resultados[key]   #se accede a su contenido (otro objeto)
+            entrada.append(objetos["entrada"])  #se accede al contenido del otro objeto y se añade a la lista correspondiente
+            salida.append(objetos["salida"])
+            danados.append(objetos["danados"])
+            perdidos.append(objetos["perdidos"])
+        #ir de 6 en 6 en la grafica 
+        fechas = fechas[-6:]
+        entrada = entrada[-6:]
+        salida = salida[-6:]
+        danados = danados[-6:]
+        perdidos = perdidos[-6:]
+
+        #GRAFICAS
+        fig, [[ax, sal], [dan, perd]] = plt.subplots(2,2, figsize=(45, 20))
+
+        #grafica datos entrada 
+        ax.plot(fechas, entrada, color='green')
+        ax.set_xlabel('Tiempo', fontsize=20)
+        ax.set_ylabel('Paquetes de entrada', fontsize=20)
+        ax.set_title('Monitoreo paquetes de entrada', fontsize=20)
+        #plt.show()
+        #plt.savefig("static/paq_entrada.jpg")
+
+        #grafica datos salida
+        sal.plot(fechas, salida, color='blue')
+        sal.set_xlabel('Tiempo', fontsize=20)
+        sal.set_ylabel('Paquetes de salida', fontsize=20)
+        sal.set_title('Monitoreo paquetes de salida', fontsize=20)
+        #plt.show()
+        #plt.savefig("static/paq_salida.jpg")
+
+        #grafica paq dañados
+        dan.plot(fechas, danados, color='yellow')
+        dan.set_xlabel('Tiempo', fontsize=20)
+        dan.set_ylabel('Paquetes dañados', fontsize=20)
+        dan.set_title('Monitoreo paquetes dañados', fontsize=20)
+        #plt.show()
+        #plt.savefig("static/paq_danados.jpg")
+
+        #grafica paq perdidos
+        perd.plot(fechas, perdidos, color='red')
+        perd.set_xlabel('Tiempo', fontsize=20)
+        perd.set_ylabel('Paquetes perdidos', fontsize=20)
+        perd.set_title('Monitoreo paquetes perdidos', fontsize=20)
+        #plt.show()
+        plt.savefig("static/paquetes.jpg")
 
     def monitorear(self, interfaz, periodo):
         # Obteniendo el nombre de interfaz
@@ -457,7 +515,7 @@ class Router:
         child.expect("#")
         """ Ejecutamos los comandos """
         for comando in comandos:
-            #logging.debug(comando)
+            logging.debug(comando)
             child.sendline(comando)
             child.expect("#")
 
