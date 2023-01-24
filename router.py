@@ -348,8 +348,6 @@ class Router:
                     enviarCorreoDanados(self.name, interfaz_nombre)
 
             time.sleep(int(periodo))
-        
-        logging.debug("Deteniendo hilo monitoreo paquetes")
 
     def trampa(self, host, interfaz_nombre, comunidad, vista):
         # Configurando engine y transport
@@ -363,6 +361,10 @@ class Router:
 
         # Función que estucha la trap
         def cbFun(snmpEngine, stateReference, contextEngineId, contextName, varBinds, cbCtx):
+            t = threading.currentThread()
+            if not getattr(t, "do_run", True): 
+                return
+
             valor = str((varBinds.pop())[-1])
             
             if valor != "3":
@@ -379,18 +381,7 @@ class Router:
         # Ejecutando el dispatcher
         try:
             snmpEngine.transportDispatcher.runDispatcher()
-            
-            # Deteniendo el hilo y cerrando el dispatcher
-            t = threading.currentThread()
-            while getattr(t, "do_run", True):
-                time.sleep(1)
-                
-            logging.debug("Deteniendo hilo de trampa")
-            snmpEngine.transportDispatcher.jobFinished(1)
-            transportDispatcher.unregisterRecvCbFun(recvId=None)
-            transportDispatcher.unregisterTransport(udp.domainName)
-            snmpEngine.transportDispatcher.closeDispatcher()
-                
+                        
         except:
             snmpEngine.transportDispatcher.closeDispatcher()
             raise
