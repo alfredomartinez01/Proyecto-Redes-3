@@ -361,9 +361,11 @@ class Router:
 
         def cbFun(snmpEngine, stateReference, contextEngineId, contextName, varBinds, cbCtx):
             valor = str((varBinds.pop())[-1])
-            with open('status.txt', 'w') as f:
-                f.write(valor+"\n")
-                f.close()
+            
+            for name, val in varBinds:   
+                logging.info('%s = %s' % (name.prettyPrint(), val.prettyPrint()))
+                print('%s = %s' % (name.prettyPrint(), val.prettyPrint()))
+                
             logging.debug(valor)
 
         ntfrcv.NotificationReceiver(snmpEngine, cbFun)

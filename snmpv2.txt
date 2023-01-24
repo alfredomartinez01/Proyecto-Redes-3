@@ -1,10 +1,10 @@
 /*Para el router*/
 snmp-server community comunidad RW
-snmp-server host 10.0.1.1 version 2c comunidad
+snmp-server host 10.0.1.1 version 2c comunidad udp-port 1400
 
 snmp-server enable traps snmp linkdown
 snmp-server enable traps snmp linkup
-snmp-server enable traps snmp config
+snmp-server enable traps config
 
 /*Para el gestor*/
 com2sec sec_name_com default comunidad
