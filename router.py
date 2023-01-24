@@ -348,10 +348,12 @@ class Router:
                     enviarCorreoDanados(self.name, interfaz_nombre)
 
             time.sleep(int(periodo))
+        
+        logging.debug("Deteniendo hilo monitoreo paquetes")
 
     def trampa(self, host, interfaz_nombre, comunidad, vista):
+        # Configurando engine y transport
         snmpEngine = engine.SnmpEngine()
-
         config.addTransport(
             snmpEngine, udp.domainName + (1,),
             udp.UdpTransport().openServerMode((host, 1400))
@@ -359,6 +361,7 @@ class Router:
 
         config.addV1System(snmpEngine, vista, comunidad)
 
+        # Función que estucha la trap
         def cbFun(snmpEngine, stateReference, contextEngineId, contextName, varBinds, cbCtx):
             valor = str((varBinds.pop())[-1])
             
@@ -371,10 +374,23 @@ class Router:
                 logging.debug("Terminal configurada desde dispositivo")
 
         ntfrcv.NotificationReceiver(snmpEngine, cbFun)
-        snmpEngine.transportDispatcher.jobStarted(1)  
+        snmpEngine.transportDispatcher.jobStarted(1)
 
+        # Ejecutando el dispatcher
         try:
             snmpEngine.transportDispatcher.runDispatcher()
+            
+            # Deteniendo el hilo y cerrando el dispatcher
+            t = threading.currentThread()
+            while getattr(t, "do_run", True):
+                time.sleep(1)
+                
+            logging.debug("Deteniendo hilo de trampa")
+            snmpEngine.transportDispatcher.jobFinished(1)
+            transportDispatcher.unregisterRecvCbFun(recvId=None)
+            transportDispatcher.unregisterTransport(udp.domainName)
+            snmpEngine.transportDispatcher.closeDispatcher()
+                
         except:
             snmpEngine.transportDispatcher.closeDispatcher()
             raise
@@ -394,16 +410,21 @@ class Router:
         matplot.savefig("static/paq_entrada.jpg")
 
     def monitorear(self, interfaz, periodo):
+        # Obteniendo el nombre de interfaz
+        logging.debug('Obteniendo nombre de interfaz '+ str(interfaz))
         interfaz_nombre = self.snmpV3_query(self.ip, '1.3.6.1.2.1.2.2.1.2' + "." + str(interfaz))
 
+        # Iniciando monitoreo de paquete
+        logging.debug('Iniciando monitoreo de paquetes en interfaz ' + interfaz_nombre)
         hilo_monitoreo = threading.Thread(target=self.monitor_paq, args=(interfaz, interfaz_nombre, periodo))
-        
         hilo_monitoreo.start()
         
-        self.trampa('10.0.1.1', interfaz_nombre, 'comunidad', 'vis_comunidad_read')
-        logging.debug('Trampa iniciada')
+        # Iniciando monitorer de trampa
+        logging.debug('Trampa iniciada en interfaz ' + interfaz_nombre)
+        hilo_trampa = threading.Thread(target=self.trampa, args=('10.0.1.1', interfaz_nombre, 'comunidad', 'vis_comunidad_read'))
+        hilo_trampa.start()
         
-        return hilo_monitoreo
+        return hilo_monitoreo, hilo_trampa
     
     def modificarProtocolo(self, nombreProtocolo, mode):
         with open("protocolos.json", "r") as file:

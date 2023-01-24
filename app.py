@@ -8,59 +8,65 @@ logging.basicConfig(level=logging.DEBUG, format='%(levelname)s: %(message)s')
 app = Flask(__name__)
 red = None
 hilo_monitoreo = None
+hilo_trampa = None
 
 @app.get('/')
 def index():
     """ Obtiene la pagina principal """
-    global hilo_monitoreo
-
-    if (hilo_monitoreo != None):
-        logging.debug("deteniendo hilo monitoreo...")
+    global hilo_monitoreo    
+    global hilo_trampa
+    if (hilo_monitoreo != None and hilo_trampa != None):
+        logging.debug("deteniendo hilos...")
         hilo_monitoreo.do_run = False
+        hilo_trampa.do_run = False
         
     return send_file('static/index.html')
     
 @app.get('/usuarios')
 def usuarios():
     """ Obtiene la pagina de gestión de usuarios """
-    global hilo_monitoreo
-
-    if (hilo_monitoreo != None):
-        logging.debug("deteniendo hilo monitoreo...")
+    global hilo_monitoreo    
+    global hilo_trampa
+    if (hilo_monitoreo != None and hilo_trampa != None):
+        logging.debug("deteniendo hilos...")
         hilo_monitoreo.do_run = False
+        hilo_trampa.do_run = False
         
     return send_file('static/usuarios.html')
 
 @app.get('/monitorear')
 def monitorear():
     """ Obtiene la pagina de monitoreo """
-    global hilo_monitoreo
-
-    if (hilo_monitoreo != None):
-        logging.debug("deteniendo hilo monitoreo...")
+    global hilo_monitoreo    
+    global hilo_trampa
+    if (hilo_monitoreo != None and hilo_trampa != None):
+        logging.debug("deteniendo hilos...")
         hilo_monitoreo.do_run = False
+        hilo_trampa.do_run = False
         
     return send_file('static/monitorear.html')
 
 @app.get('/protocolos')
 def protocolos():
     """ Obtiene la pagina de protocolos """
-    global hilo_monitoreo
-
-    if (hilo_monitoreo != None):
-        logging.debug("deteniendo hilo monitoreo...")
+    global hilo_monitoreo    
+    global hilo_trampa
+    if (hilo_monitoreo != None and hilo_trampa != None):
+        logging.debug("deteniendo hilos...")
         hilo_monitoreo.do_run = False
+        hilo_trampa.do_run = False
         
     return send_file('static/protocolos.html')
 
 @app.get('/mib')
 def mib():
     """ Obtiene la pagina de modificar los datos de la mib """
-    global hilo_monitoreo
-
-    if (hilo_monitoreo != None):
-        logging.debug("deteniendo hilo monitoreo...")
+    global hilo_monitoreo    
+    global hilo_trampa
+    if (hilo_monitoreo != None and hilo_trampa != None):
+        logging.debug("deteniendo hilos...")
         hilo_monitoreo.do_run = False
+        hilo_trampa.do_run = False
         
     return send_file('static/modificar-mib.html')
     
@@ -147,13 +153,15 @@ def monitorearInterfaz():
     red.configurarSNMPV3(router)
 
     global hilo_monitoreo    
-    if (hilo_monitoreo != None):
-        logging.debug("deteniendo hilo monitoreo...")
+    global hilo_trampa
+    if (hilo_monitoreo != None and hilo_trampa != None):
+        logging.debug("deteniendo hilos...")
         hilo_monitoreo.do_run = False
+        hilo_trampa.do_run = False
         
     try:
         # Realizando monitoreo
-        hilo_monitoreo = red.monitorear(router, interfaz, periodo)
+        hilo_monitoreo, hilo_trampa = red.monitorear(router, interfaz, periodo)
         return jsonify({"status": "ok"})
 
     except Exception as e:
