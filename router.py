@@ -340,20 +340,21 @@ class Router:
             # graficar(resultados
 
             # Enviando correos por perdida o daño
-            if resultado["perdidos"]/resultado["salida"] > 0.5:
-                enviarCorreoPerdidos(self.name, str(interfaz))
+            if resultado["salida"] > 0:
+                if resultado["perdidos"]/resultado["salida"] > 0.5:
+                    enviarCorreoPerdidos(self.name, str(interfaz))
 
-            if resultado["danados"]/resultado["salida"] > 0.5:
-                enviarCorreoDanados(self.name, str(interfaz))
+                if resultado["danados"]/resultado["salida"] > 0.5:
+                    enviarCorreoDanados(self.name, str(interfaz))
 
             time.sleep(int(periodo))
 
-    def trampa(host, comunidad, vista):
+    def trampa(self, host, comunidad, vista):
         snmpEngine = engine.SnmpEngine()
 
         config.addTransport(
             snmpEngine, udp.domainName + (1,),
-            udp.UdpTransport().openServerMode((host, 162))
+            udp.UdpTransport().openServerMode((host, 1400))
         )
 
         config.addV1System(snmpEngine, vista, comunidad)
@@ -393,7 +394,7 @@ class Router:
         
         hilo_monitoreo.start()
         
-        trampa('10.0.1.1', 'comunidad', 'vis_comunidad_read')
+        self.trampa('10.0.1.1', 'comunidad', 'vis_comunidad_read')
         logging.debug('Trampa iniciada')
         
         return hilo_monitoreo
