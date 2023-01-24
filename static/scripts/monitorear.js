@@ -27,7 +27,7 @@ document.querySelector("#select-router").addEventListener('change', (e) => {
     const selectInterfaz = document.querySelector("#select-interfaz");
     selectInterfaz.innerHTML = `
         <option value="">Selecciona la interfaz</option>
-        ${router.interfaces.map((interfaz, index) => `<option value="${index}">fas ${interfaz}</option>`).join('')}
+        ${router.interfaces.map((interfaz, index) => `<option value="${index+1}">fas ${interfaz}</option>`).join('')}
     `;
 
     containerInterfaz.style.display = "block";
@@ -62,7 +62,11 @@ boton_aceptar.addEventListener('click', async () => {
         boton_aceptar.style.display = "none";
 
         /* Mostramos gráficas */
-        // obtenerGraficas();
+        setInterval(async ()=>{
+            console.log("Consultando...")
+            await obtenerGraficas()
+            document.querySelector("#imagenes").style.display = "flex";
+        }, 1000)
 
     } catch (error) {
         alert(error);

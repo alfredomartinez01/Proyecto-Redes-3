@@ -308,35 +308,49 @@ class Router:
         paq_perdidos = '1.3.6.1.2.1.2.2.1.13' + "." + str(interfaz)
         
         resultados = {}
-            
-        while True:
+        ac_entrada = int(self.snmpV3_query(self.ip, in_uPackets))
+        ac_salida = int(self.snmpV3_query(self.ip, out_uPackets))
+        ac_danados = int(self.snmpV3_query(self.ip, paq_danados))
+        ac_perdidos = int(self.snmpV3_query(self.ip, paq_perdidos))
+
+        t = threading.currentThread()
+        while getattr(t, "do_run", True):
             resultado = {}
-            if len(resultados) == 0:
-                resultado["entrada"] = int(self.snmpV3_query(self.ip, in_uPackets))
-                resultado["salida"] = int(self.snmpV3_query(self.ip, out_uPackets))
-                resultado["danados"] = int(self.snmpV3_query(self.ip, paq_danados))
-                resultado["perdidos"] = int(self.snmpV3_query(self.ip, paq_perdidos))
-            else:
-                resultado["entrada"] = int(self.snmpV3_query(self.ip, in_uPackets)) - resultados[list(resultados.keys())[0]]["entrada"]
-                resultado["salida"] = int(self.snmpV3_query(self.ip, out_uPackets)) - resultados[list(resultados.keys())[0]]["salida"]
-                resultado["danados"] = int(self.snmpV3_query(self.ip, paq_danados)) - resultados[list(resultados.keys())[0]]["danados"]
-                resultado["perdidos"] = int(self.snmpV3_query(self.ip, paq_perdidos)) - resultados[list(resultados.keys())[0]]["perdidos"]
+            resultado["entrada"] = int(self.snmpV3_query(self.ip, in_uPackets)) - ac_entrada
+            resultado["salida"] = int(self.snmpV3_query(self.ip, out_uPackets)) - ac_salida
+            resultado["danados"] = int(self.snmpV3_query(self.ip, paq_danados)) - ac_danados
+            resultado["perdidos"] = int(self.snmpV3_query(self.ip, paq_perdidos)) - ac_perdidos
             
+            ac_entrada = resultado["entrada"] + ac_entrada
+            ac_salida = resultado["salida"] + ac_salida
+            ac_danados = resultado["danados"] + ac_danados
+            ac_perdidos = resultado["perdidos"] + ac_perdidos
+
             resultados[str(datetime.datetime.now())] = resultado
+            
+            """ Guardamos el estado del protocolo """
+            with open("resultados.json", "w") as file:
+                json.dump(resultados, file, indent=4)
+
+            # Graficando resultados
+            # graficar(resultados
+
+            # Enviando correos por perdida o daño
+            if resultado["perdidos"]/resultado["salida"] > 0.5:
+                enviarCorreoPerdidos(self.name, str(interfaz))
+
+            if resultado["danados"]/resultado["salida"] > 0.5:
+                enviarCorreoDanados(self.name, str(interfaz))
+
             time.sleep(int(periodo))
 
-            """ Guardamos el estado del protocolo """
-            # with open("resultados.json", "w") as file:
-                # json.dump(resultados, file, indent=4)
-
-            graficar(resultados)
 
     def graficar(resultados):
         with open("resultados.json", "r") as file:
             resultados = json.load(file)
 
         fechas = []
-        
+
         entrada = []
         salida = []
         danados = []
@@ -345,10 +359,11 @@ class Router:
         matplot.plot(fechas, entrada)
         matplot.savefig("static/paq_entrada.jpg")
 
-    def monitorear(self,interfaz, periodo, hilo_monitoreo):
+    def monitorear(self,interfaz, periodo):
         hilo_monitoreo = threading.Thread(target=self.monitor_paq, args=(interfaz, periodo))
         
         hilo_monitoreo.start()
+        return hilo_monitoreo
     
     def modificarProtocolo(self, nombreProtocolo, mode):
         with open("protocolos.json", "r") as file:

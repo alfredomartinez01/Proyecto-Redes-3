@@ -38,7 +38,7 @@ def enviarCorreoPerdidos(nombreRouter, nombreEnlace):
     enviarCorreo(cuerpo, 'perdidos.png')
 
 #Funcion para establecer cuerpo de correo de notificación de paquetes dañados
-def enviarCorreoDañados(nombreRouter, nombreEnlace):
+def enviarCorreoDanados(nombreRouter, nombreEnlace):
     #Lectura de estilos
     estilos = open('css/estilos.css','r').read()
 
@@ -110,7 +110,7 @@ def enviarCorreo(cuerpoC, nombreI):
 
     email.attach(MIMEText(cuerpoC, "html")) 
 
-    logging.debug("enviando...")
+    logging.debug("enviando correo...")
     smtp = smtplib.SMTP_SSL("smtp.gmail.com")
     smtp.login(remitente, password[1])
     smtp.sendmail(remitente, destinatario, email.as_string())
@@ -118,7 +118,7 @@ def enviarCorreo(cuerpoC, nombreI):
 
 if __name__ == '__main__':
     #enviarCorreoPerdidos('R1', 'f 0/0')
-    #enviarCorreoDañados('R1', 'f 0/0')
+    #enviarCorreoDanados('R1', 'f 0/0')
     #enviarCorreoModificacionMIB('R3', obj)
     enviarCorreoEstadoInterfaz('R2', 'F 1/2', 0) #Caida
     #enviarCorreoEstadoInterfaz('R2', 'F 1/2', 1) #Arranque

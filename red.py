@@ -155,12 +155,12 @@ class Red():
         else:
             raise Exception("Router no encontrado")
 
-    def monitorear(self, router, interfaz, periodo, hilo_monitoreo):
+    def monitorear(self, router, interfaz, periodo):
         if router in self.routers:
             router_arreglo = self.routers[router]
             router_cercano = Router(router_arreglo["ip"], router, router_arreglo["user"], router_arreglo["password"])
             
-            router_cercano.monitorear(interfaz, periodo, hilo_monitoreo)
+            return router_cercano.monitorear(interfaz, periodo)
         else:
             raise Exception("Router no encontrado")
         

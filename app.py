@@ -12,7 +12,10 @@ hilo_monitoreo = None
 @app.get('/')
 def index():
     """ Obtiene la pagina principal """
+    global hilo_monitoreo
+
     if (hilo_monitoreo != None):
+        logging.debug("deteniendo hilo monitoreo...")
         hilo_monitoreo.do_run = False
         
     return send_file('static/index.html')
@@ -20,7 +23,10 @@ def index():
 @app.get('/usuarios')
 def usuarios():
     """ Obtiene la pagina de gestión de usuarios """
+    global hilo_monitoreo
+
     if (hilo_monitoreo != None):
+        logging.debug("deteniendo hilo monitoreo...")
         hilo_monitoreo.do_run = False
         
     return send_file('static/usuarios.html')
@@ -28,7 +34,10 @@ def usuarios():
 @app.get('/monitorear')
 def monitorear():
     """ Obtiene la pagina de monitoreo """
+    global hilo_monitoreo
+
     if (hilo_monitoreo != None):
+        logging.debug("deteniendo hilo monitoreo...")
         hilo_monitoreo.do_run = False
         
     return send_file('static/monitorear.html')
@@ -36,7 +45,10 @@ def monitorear():
 @app.get('/protocolos')
 def protocolos():
     """ Obtiene la pagina de protocolos """
+    global hilo_monitoreo
+
     if (hilo_monitoreo != None):
+        logging.debug("deteniendo hilo monitoreo...")
         hilo_monitoreo.do_run = False
         
     return send_file('static/protocolos.html')
@@ -44,7 +56,10 @@ def protocolos():
 @app.get('/mib')
 def mib():
     """ Obtiene la pagina de modificar los datos de la mib """
+    global hilo_monitoreo
+
     if (hilo_monitoreo != None):
+        logging.debug("deteniendo hilo monitoreo...")
         hilo_monitoreo.do_run = False
         
     return send_file('static/modificar-mib.html')
@@ -130,13 +145,15 @@ def monitorearInterfaz():
     
     # Levantando protocolo SNMPv3 en el router
     red.configurarSNMPV3(router)
-    
+
+    global hilo_monitoreo    
     if (hilo_monitoreo != None):
+        logging.debug("deteniendo hilo monitoreo...")
         hilo_monitoreo.do_run = False
         
     try:
         # Realizando monitoreo
-        red.monitorear(router, interfaz, periodo, hilo_monitoreo)
+        hilo_monitoreo = red.monitorear(router, interfaz, periodo)
         return jsonify({"status": "ok"})
 
     except Exception as e:
