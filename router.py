@@ -10,6 +10,10 @@ import threading
 import time
 import datetime
 
+from pysnmp.entity import engine, config
+from pysnmp.carrier.asyncore.dgram import udp
+from pysnmp.entity.rfc3413 import ntfrcv
+
 max_buffer = 65535
 
 class Router:
@@ -344,6 +348,31 @@ class Router:
 
             time.sleep(int(periodo))
 
+    def trampa(host, comunidad, vista):
+        snmpEngine = engine.SnmpEngine()
+
+        config.addTransport(
+            snmpEngine, udp.domainName + (1,),
+            udp.UdpTransport().openServerMode((host, 162))
+        )
+
+        config.addV1System(snmpEngine, vista, comunidad)
+
+        def cbFun(snmpEngine, stateReference, contextEngineId, contextName, varBinds, cbCtx):
+            valor = str((varBinds.pop())[-1])
+            with open('status.txt', 'w') as f:
+                f.write(valor+"\n")
+                f.close()
+            logging.debug(valor)
+
+        ntfrcv.NotificationReceiver(snmpEngine, cbFun)
+        snmpEngine.transportDispatcher.jobStarted(1)  
+
+        try:
+            snmpEngine.transportDispatcher.runDispatcher()
+        except:
+            snmpEngine.transportDispatcher.closeDispatcher()
+            raise
 
     def graficar(resultados):
         with open("resultados.json", "r") as file:
@@ -363,6 +392,10 @@ class Router:
         hilo_monitoreo = threading.Thread(target=self.monitor_paq, args=(interfaz, periodo))
         
         hilo_monitoreo.start()
+        
+        trampa('10.0.1.1', 'comunidad', 'vis_comunidad_read')
+        logging.debug('Trampa iniciada')
+        
         return hilo_monitoreo
     
     def modificarProtocolo(self, nombreProtocolo, mode):
